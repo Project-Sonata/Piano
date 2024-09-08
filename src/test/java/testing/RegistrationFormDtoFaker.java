@@ -1,12 +1,12 @@
 package testing;
 
 import com.github.javafaker.Faker;
-import com.odeyalo.sonata.piano.api.dto.RegistrationFormDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-import static com.odeyalo.sonata.piano.api.dto.RegistrationFormDto.*;
+import static com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto.*;
 
 public final class RegistrationFormDtoFaker {
     private final Faker faker = Faker.instance();

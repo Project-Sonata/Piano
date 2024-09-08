@@ -1,21 +1,19 @@
-package com.odeyalo.sonata.piano.api.dto;
+package com.odeyalo.sonata.piano.api.exchange.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
-import lombok.experimental.Accessors;
+import lombok.With;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import testing.RegistrationFormDtoFaker;
 
-import java.security.cert.CertPathBuilder;
 import java.time.LocalDate;
-import java.util.stream.DoubleStream;
 
-@Data
-@Accessors
+@Value
+@With
 @Builder
 @AllArgsConstructor(onConstructor_ = {@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)})
 public class RegistrationFormDto {
@@ -28,7 +26,33 @@ public class RegistrationFormDto {
     @Nullable
     String birthdate;
     @Nullable
+    @JsonProperty("enable_notification")
     String enableNotification;
+
+    // !! Attention:
+    // Getters for jackson only, see https://stackoverflow.com/questions/60030688/automatic-discovery-of-getters-without-get-prefix
+    // otherwise you will get an error that application/json content type is not supported for this class
+
+
+    public @Nullable String getEmail() {
+        return email();
+    }
+
+    public @Nullable String getPassword() {
+        return password();
+    }
+
+    public @Nullable String getGender() {
+        return gender();
+    }
+
+    public @Nullable String getBirthdate() {
+        return birthdate();
+    }
+
+    public @Nullable String getEnableNotification() {
+        return enableNotification();
+    }
 
     public static final String MALE = "male";
     public static final String FEMALE = "female";

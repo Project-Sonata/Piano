@@ -1,17 +1,19 @@
 package com.odeyalo.sonata.piano.api;
 
-import com.odeyalo.sonata.piano.api.dto.RegistrationFormDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.ExceptionMessageDto;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.LocalDate;
-
+import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -29,6 +31,25 @@ class EmailPasswordRegistrationEndpointTest {
         final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
 
         responseSpec.expectStatus().isOk();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "invalid.com",
+            "user@invalid_domain",
+            "user@@example.com"
+    })
+    void shouldReturnErrorIfEmailAddressHasInvalidFormat(@NotNull final String email) {
+        final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm()
+                .withEmail(email);
+
+        final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
+
+        responseSpec.expectStatus().isBadRequest();
+
+        responseSpec
+                .expectBody(ExceptionMessageDto.class)
+                .value(message -> assertThat(message.description()).isEqualTo("Email has invalid format"));
     }
 
     @NotNull
