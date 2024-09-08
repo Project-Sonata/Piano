@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.piano.api;
+package com.odeyalo.sonata.piano.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,4 +12,6 @@ import lombok.Value;
 public class RegistrationFormDto {
     @JsonProperty("email")
     String email;
+    @JsonProperty("password")
+    String password;
 }

@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -24,7 +25,7 @@ class EmailPasswordRegistrationEndpointTest {
     WebTestClient webTestClient;
 
     @Test
-    void shouldReturn200OkStatusIfCredentialsAreValid() {
+    void shouldReturn200OkStatusIfRegistrationFormIsValid() {
 
         final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm();
 
@@ -50,6 +51,25 @@ class EmailPasswordRegistrationEndpointTest {
         responseSpec
                 .expectBody(ExceptionMessageDto.class)
                 .value(message -> assertThat(message.description()).isEqualTo("Email has invalid format"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "aboba", // must be more than 8 characters
+            "mustContainAtLeastOneNumber",
+            "1234567890" // must contain at least one character
+    })
+    void shouldReturnErrorIfPasswordIsInvalid(@NotNull final String password) {
+        final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm()
+                .withPassword(password);
+
+        final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
+
+        responseSpec.expectStatus().isBadRequest();
+
+        responseSpec
+                .expectBody(ExceptionMessageDto.class)
+                .value(message -> assertThat(message.description()).isEqualTo("Password must contain at least 8 characters and at least 1 number"));
     }
 
     @NotNull

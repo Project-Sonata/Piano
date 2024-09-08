@@ -18,7 +18,7 @@ public final class RegistrationFormDtoFaker {
                 .toLocalDate();
         builder
                 .email(faker.internet().emailAddress())
-                .password(faker.internet().password(8, 24, true, false, true))
+                .password(faker.internet().password(8, 24, true, false, true) + faker.random().nextInt(22))
                 .withCustomEnableNotification(faker.options().option(NOTIFICATION_ENABLED, NOTIFICATION_DISABLED))
                 .gender(faker.options().option(MALE, FEMALE, PREFER_NOT_TO_SAY))
                 .birthdate(userBirthdate);
