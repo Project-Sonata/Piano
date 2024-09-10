@@ -12,6 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -32,6 +34,25 @@ class EmailPasswordRegistrationEndpointTest {
         final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
 
         responseSpec.expectStatus().isOk();
+    }
+
+    @Test
+    void name() {
+        System.out.println("hello");
+    }
+
+    //
+    @Test
+    void shouldReturnErrorIfUserIsYoungerThan13YearsOld() {
+        final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm()
+                .birthdate(LocalDate.now().minusYears(10));
+
+        final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
+
+        responseSpec.expectStatus().isBadRequest();
+
+        responseSpec.expectBody(ExceptionMessageDto.class)
+                .value(message -> assertThat(message.description()).isEqualTo("User must be older than 13 years"));
     }
 
     @ParameterizedTest

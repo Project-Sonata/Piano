@@ -64,6 +64,11 @@ public class RegistrationFormDto {
         return RegistrationFormDtoFaker.randomForm().get();
     }
 
+    @NotNull
+    public RegistrationFormDto birthdate(@NotNull final LocalDate localDate) {
+        return withBirthdate(localDate.toString());
+    }
+
     public static class RegistrationFormDtoBuilder {
         private String gender;
         private String enableNotification;

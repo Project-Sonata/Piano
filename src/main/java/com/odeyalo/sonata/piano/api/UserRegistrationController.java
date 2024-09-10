@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 @RestController
@@ -34,6 +35,14 @@ public final class UserRegistrationController {
                     ResponseEntity
                             .badRequest()
                             .body(ExceptionMessage.of("Password must contain at least 8 characters and at least 1 number"))
+            );
+        }
+
+        if ( LocalDate.now().minusYears(13).isBefore(registrationFormDto.birthdate()) ) {
+            return Mono.just(
+                    ResponseEntity
+                            .badRequest()
+                            .body(ExceptionMessage.of("User must be older than 13 years"))
             );
         }
 
