@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.api;
 
 import com.odeyalo.sonata.piano.api.exchange.dto.ExceptionMessageDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationResponseDto;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +35,17 @@ class EmailPasswordRegistrationEndpointTest {
         final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
 
         responseSpec.expectStatus().isOk();
+    }
+
+    @Test
+    void shouldReturnResponseIndicatingEmailMustBeConfirmed() {
+
+        final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm();
+
+        final WebTestClient.ResponseSpec responseSpec = registrationRequest(registrationForm);
+
+        responseSpec.expectBody(RegistrationResponseDto.class)
+                .value(response -> assertThat(response.getAction()).isEqualTo("email_confirmation_required"));
     }
 
     @Test

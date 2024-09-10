@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.api;
 
+import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
 import com.odeyalo.sonata.piano.api.dto.RegistrationFormDto;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -46,6 +47,10 @@ public final class UserRegistrationController {
             );
         }
 
-        return Mono.empty();
+        return Mono.just(
+                ResponseEntity.ok(
+                        new EmailConfirmationRequiredResponseDto()
+                )
+        );
     }
 }
