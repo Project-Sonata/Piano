@@ -37,12 +37,6 @@ class EmailPasswordRegistrationEndpointTest {
     }
 
     @Test
-    void name() {
-        System.out.println("hello");
-    }
-
-    //
-    @Test
     void shouldReturnErrorIfUserIsYoungerThan13YearsOld() {
         final RegistrationFormDto registrationForm = RegistrationFormDto.randomForm()
                 .birthdate(LocalDate.now().minusYears(10));

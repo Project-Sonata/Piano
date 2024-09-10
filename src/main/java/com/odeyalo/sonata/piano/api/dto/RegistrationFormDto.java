@@ -1,9 +1,8 @@
 package com.odeyalo.sonata.piano.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.odeyalo.sonata.piano.api.model.Gender;
+import com.odeyalo.sonata.piano.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -25,6 +24,7 @@ public class RegistrationFormDto {
     @NotNull
     LocalDate birthdate;
     @NotNull
+    @JsonProperty("gender")
     Gender gender;
     @JsonProperty("enable_notification")
     boolean enableNotification;

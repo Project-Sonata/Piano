@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.piano.api.model;
+package com.odeyalo.sonata.piano.model;
 
 public enum Gender {
     MALE,
