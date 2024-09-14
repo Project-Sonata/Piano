@@ -35,4 +35,16 @@ class UnsecureEmailPasswordRegistrationManagerTest {
                 .assertNext(result -> assertThat(result.registerdUser().email().asString()).isEqualTo("miku.nakano@gmail.com"))
                 .verifyComplete();
     }
+
+    @Test
+    void shouldReturnActivatedUserAfterRegistrationComplete() {
+        UnsecureEmailPasswordRegistrationManager testable = new UnsecureEmailPasswordRegistrationManager();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create().get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .assertNext(result -> assertThat(result.registerdUser().isActivated()).isTrue())
+                .verifyComplete();
+    }
 }
