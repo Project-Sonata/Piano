@@ -1,8 +1,12 @@
 package com.odeyalo.sonata.piano.service;
 
+import com.odeyalo.sonata.piano.exception.PasswordRegexException;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import reactor.test.StepVerifier;
 import testing.RegistrationFormFaker;
 
@@ -80,6 +84,24 @@ class UnsecureEmailPasswordRegistrationManagerTest {
         boolean passwordMatches = passwordEncoder.matches("ilovemikunakan0", result.registeredUser().password());
 
         assertThat(passwordMatches).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "invalid", // no digits
+            "12345689012", // no character
+            "more", // less than 8 symbols
+    })
+    void shouldReturnErrorIfPasswordIsInvalid(@NotNull final String password) {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create()
+                .withPassword(password)
+                .get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .verifyError(PasswordRegexException.class);
     }
 
     static class TestableBuilder {
