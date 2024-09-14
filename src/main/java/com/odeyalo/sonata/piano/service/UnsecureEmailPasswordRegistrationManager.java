@@ -1,10 +1,16 @@
 package com.odeyalo.sonata.piano.service;
 
 import com.odeyalo.sonata.piano.model.User;
+import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
+    private final PasswordEncoder passwordEncoder;
+
+    public UnsecureEmailPasswordRegistrationManager(final PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @NotNull
@@ -13,6 +19,7 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
                 RegistrationResult.completedFor(
                         new User(
                                 form.email(),
+                                passwordEncoder.encode(form.password()),
                                 true,
                                 false
                         )

@@ -16,7 +16,7 @@ public class RegistrationResult {
     @NotNull
     NextAction nextStep;
     @NotNull
-    User registerdUser;
+    User registeredUser;
 
     @NotNull
     public static RegistrationResult confirmEmailFor(@NotNull final User user) {

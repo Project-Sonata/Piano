@@ -11,7 +11,8 @@ public final class RegistrationFormFaker {
 
     public RegistrationFormFaker() {
         builder
-                .email(Email.valueOf(faker.internet().emailAddress()));
+                .email(Email.valueOf(faker.internet().emailAddress()))
+                .password(faker.internet().password(8, 32, true, false, true));
     }
 
 
@@ -26,6 +27,11 @@ public final class RegistrationFormFaker {
     @NotNull
     public RegistrationFormFaker withEmail(@NotNull final String email) {
         builder.email(Email.valueOf(email));
+        return this;
+    }
+
+    public RegistrationFormFaker withPassword(@NotNull final String password) {
+        builder.password(password);
         return this;
     }
 }

@@ -15,4 +15,6 @@ import org.jetbrains.annotations.NotNull;
 public class RegistrationForm {
     @NotNull
     Email email;
+    @NotNull
+    String password;
 }

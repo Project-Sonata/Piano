@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 public class User {
     @NotNull
     Email email;
+    @NotNull
+    String password;
     boolean activated;
     boolean emailConfirmed;
 
