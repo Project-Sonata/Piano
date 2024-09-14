@@ -47,4 +47,16 @@ class UnsecureEmailPasswordRegistrationManagerTest {
                 .assertNext(result -> assertThat(result.registerdUser().isActivated()).isTrue())
                 .verifyComplete();
     }
+
+    @Test
+    void shouldIndicateThatUserEmailIsNotConfirmedAfterRegistrationComplete() {
+        UnsecureEmailPasswordRegistrationManager testable = new UnsecureEmailPasswordRegistrationManager();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create().get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .assertNext(result -> assertThat(result.registerdUser().isEmailConfirmed()).isFalse())
+                .verifyComplete();
+    }
 }

@@ -13,7 +13,9 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
                 RegistrationResult.completedFor(
                         new User(
                                 form.email(),
-                                true)
+                                true,
+                                false
+                        )
                 )
         );
     }
