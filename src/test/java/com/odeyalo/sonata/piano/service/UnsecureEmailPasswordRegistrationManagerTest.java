@@ -86,24 +86,6 @@ class UnsecureEmailPasswordRegistrationManagerTest {
         assertThat(passwordMatches).isTrue();
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "invalid", // no digits
-            "12345689012", // no character
-            "more", // less than 8 symbols
-    })
-    void shouldReturnErrorIfPasswordIsInvalid(@NotNull final String password) {
-        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
-
-        RegistrationForm registrationForm = RegistrationFormFaker.create()
-                .withPassword(password)
-                .get();
-
-        testable.registerUser(registrationForm)
-                .as(StepVerifier::create)
-                .verifyError(PasswordRegexException.class);
-    }
-
     static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
 

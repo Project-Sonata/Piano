@@ -19,12 +19,6 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
     @NotNull
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
 
-        String pattern = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
-
-        if ( !Pattern.compile(pattern).matcher(form.password()).matches() ) {
-            return Mono.error(new PasswordRegexException("Password does not match regex"));
-        }
-
         return Mono.just(
                 RegistrationResult.completedFor(
                         new User(

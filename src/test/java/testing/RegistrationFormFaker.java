@@ -2,6 +2,7 @@ package testing;
 
 import com.github.javafaker.Faker;
 import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.model.InputPassword;
 import com.odeyalo.sonata.piano.service.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +11,11 @@ public final class RegistrationFormFaker {
     private final Faker faker = Faker.instance();
 
     public RegistrationFormFaker() {
+        InputPassword randomPassword = InputPassword.valueOf(faker.internet().password(8, 32, true, false, true));
+
         builder
                 .email(Email.valueOf(faker.internet().emailAddress()))
-                .password(faker.internet().password(8, 32, true, false, true));
+                .password(randomPassword);
     }
 
 
@@ -31,7 +34,7 @@ public final class RegistrationFormFaker {
     }
 
     public RegistrationFormFaker withPassword(@NotNull final String password) {
-        builder.password(password);
+        builder.password(InputPassword.valueOf(password));
         return this;
     }
 }
