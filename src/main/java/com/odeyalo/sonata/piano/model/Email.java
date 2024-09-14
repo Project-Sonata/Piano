@@ -23,4 +23,9 @@ public record Email(@NotNull String value) {
     public static Email valueOf(@NotNull final String value) {
         return new Email(value);
     }
+
+    @NotNull
+    public String asString() {
+        return value;
+    }
 }

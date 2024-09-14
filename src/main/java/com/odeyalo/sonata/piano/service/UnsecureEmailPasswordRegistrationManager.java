@@ -11,7 +11,7 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
         return Mono.just(
                 RegistrationResult.completedFor(
-                        new User()
+                        new User(form.email())
                 )
         );
     }

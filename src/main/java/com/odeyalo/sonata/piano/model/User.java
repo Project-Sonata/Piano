@@ -4,4 +4,5 @@ import lombok.Value;
 
 @Value
 public class User {
+    Email email;
 }
