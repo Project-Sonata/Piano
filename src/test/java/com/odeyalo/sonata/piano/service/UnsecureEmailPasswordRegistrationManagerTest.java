@@ -3,6 +3,7 @@ package com.odeyalo.sonata.piano.service;
 import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
 import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.User;
+import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
 import org.jetbrains.annotations.NotNull;
@@ -214,7 +215,11 @@ class UnsecureEmailPasswordRegistrationManagerTest {
         }
 
         public UnsecureEmailPasswordRegistrationManager build() {
-            return new UnsecureEmailPasswordRegistrationManager(passwordEncoder, new InMemoryUserService(registeredUsers));
+
+            return new UnsecureEmailPasswordRegistrationManager(
+                    new DefaultUserFactory(passwordEncoder),
+                    new InMemoryUserService(registeredUsers)
+            );
         }
     }
 }
