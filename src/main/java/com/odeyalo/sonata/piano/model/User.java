@@ -14,6 +14,9 @@ public class User {
     UserId id;
     @NotNull
     Email email;
+    // maybe i should move it to HashedPassword VO?
+    // not sure about it, how validation of hashed password should be performed?
+    // leave it like this for now, for simplicity
     @NotNull
     String password;
     @NotNull
