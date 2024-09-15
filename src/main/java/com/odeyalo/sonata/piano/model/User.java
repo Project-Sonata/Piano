@@ -3,10 +3,10 @@ package com.odeyalo.sonata.piano.model;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
-
 @Value
 public class User {
+    @NotNull
+    UserId id;
     @NotNull
     Email email;
     @NotNull

@@ -123,6 +123,18 @@ class UnsecureEmailPasswordRegistrationManagerTest {
         assertThat(result.registeredUser().birthdate()).isEqualTo(birthdate);
     }
 
+    @Test
+    void shouldGenerateUserWithGeneratedId() {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create().get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .assertNext(result -> assertThat(result.registeredUser().id()).isNotNull())
+                .verifyComplete();
+    }
+
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
 

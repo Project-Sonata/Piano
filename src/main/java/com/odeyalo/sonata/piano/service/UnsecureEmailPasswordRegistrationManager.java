@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service;
 
 import com.odeyalo.sonata.piano.model.User;
+import com.odeyalo.sonata.piano.model.UserId;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
@@ -21,6 +22,7 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
         return Mono.just(
                 RegistrationResult.completedFor(
                         new User(
+                                UserId.random(),
                                 form.email(),
                                 passwordEncoder.encode(form.password()),
                                 form.gender(),
