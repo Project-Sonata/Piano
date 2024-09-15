@@ -1,12 +1,11 @@
 package com.odeyalo.sonata.piano.service;
 
-import com.odeyalo.sonata.piano.exception.PasswordRegexException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import java.util.regex.Pattern;
+import static com.odeyalo.sonata.piano.model.Gender.MALE;
 
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
     private final PasswordEncoder passwordEncoder;
@@ -24,10 +23,12 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
                         new User(
                                 form.email(),
                                 passwordEncoder.encode(form.password()),
+                                form.gender(),
                                 true,
-                                false
+                                false,
+                                form.birthdate()
+                                )
                         )
-                )
         );
     }
 }
