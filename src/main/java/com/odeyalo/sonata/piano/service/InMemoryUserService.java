@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.service;
 
+import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.UserId;
@@ -27,12 +28,18 @@ public final class InMemoryUserService implements UserService {
 
     @Override
     @NotNull
-    public Mono<User> save(@NotNull final  User user) {
-        return Mono.fromCallable(() -> {
+    public Mono<User> save(@NotNull final User user) {
+
+        final Mono<User> saveUser = Mono.fromCallable(() -> {
             users.put(user.id(), user);
 
             return user;
         });
+
+        return findByEmail(user.email())
+                .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
+                .switchIfEmpty(Mono.defer(() -> saveUser))
+                .cast(User.class);
     }
 
     @Override
@@ -45,7 +52,7 @@ public final class InMemoryUserService implements UserService {
 
     @Override
     @NotNull
-    public  Mono<User> findByEmail(@NotNull final Email email) {
+    public Mono<User> findByEmail(@NotNull final Email email) {
         return Mono.justOrEmpty(
                 users.values().stream()
                         .filter(u -> Objects.equals(u.email(), email))

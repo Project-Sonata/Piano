@@ -1,6 +1,5 @@
 package com.odeyalo.sonata.piano.service;
 
-import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.UserId;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
@@ -21,14 +20,6 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
     @NotNull
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
 
-        return userService.findByEmail(form.email())
-                .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
-                .switchIfEmpty(Mono.defer(() -> processRegistration(form)))
-                .cast(RegistrationResult.class);
-    }
-
-    @NotNull
-    private Mono<RegistrationResult> processRegistration(@NotNull final RegistrationForm form) {
         User user = new User(
                 UserId.random(),
                 form.email(),
