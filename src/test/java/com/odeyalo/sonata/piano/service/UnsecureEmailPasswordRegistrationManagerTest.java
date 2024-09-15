@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.piano.service;
 
+import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
 import com.odeyalo.sonata.piano.model.Gender;
+import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +12,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import reactor.test.StepVerifier;
 import testing.RegistrationFormFaker;
+import testing.UserFaker;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.odeyalo.sonata.piano.service.RegistrationResult.NextAction.COMPLETED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -147,8 +152,25 @@ class UnsecureEmailPasswordRegistrationManagerTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldReturnErrorIfUserWithTheSameEmailAlreadyExist() {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder()
+                .withUsers("miku.nakano@gmail.com")
+                .build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create()
+                .withEmail("miku.nakano@gmail.com")
+                .get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .expectError(EmailAddressAlreadyInUseException.class)
+                .verify();
+    }
+
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
+        private final List<User> registeredUsers = new ArrayList<>();
 
         public static TestableBuilder builder() {
             return new TestableBuilder();
@@ -159,8 +181,19 @@ class UnsecureEmailPasswordRegistrationManagerTest {
             return this;
         }
 
+        public TestableBuilder withUsers(@NotNull final String... emails) {
+
+            for (final String email : emails) {
+                User user = UserFaker.create().withEmail(email).get();
+
+                registeredUsers.add(user);
+            }
+
+            return this;
+        }
+
         public UnsecureEmailPasswordRegistrationManager build() {
-            return new UnsecureEmailPasswordRegistrationManager(passwordEncoder);
+            return new UnsecureEmailPasswordRegistrationManager(passwordEncoder, new InMemoryUserService(registeredUsers));
         }
     }
 }

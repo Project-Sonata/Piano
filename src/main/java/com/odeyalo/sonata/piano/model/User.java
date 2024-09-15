@@ -1,10 +1,14 @@
 package com.odeyalo.sonata.piano.model;
 
 import com.odeyalo.sonata.common.context.ContextUri;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 @Value
+@Builder
+@AllArgsConstructor
 public class User {
     @NotNull
     UserId id;
