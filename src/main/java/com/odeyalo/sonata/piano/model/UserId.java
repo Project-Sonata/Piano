@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.model;
 
 
+import com.odeyalo.sonata.common.context.ContextUri;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,5 +25,10 @@ public record UserId(@NotNull String value) {
         return UserId.fromString(
                 RandomStringUtils.randomAlphanumeric(22)
         );
+    }
+
+    @NotNull
+    public ContextUri toContextUri() {
+        return ContextUri.forUser(value);
     }
 }

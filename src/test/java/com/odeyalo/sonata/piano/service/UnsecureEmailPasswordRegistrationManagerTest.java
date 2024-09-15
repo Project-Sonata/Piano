@@ -135,6 +135,18 @@ class UnsecureEmailPasswordRegistrationManagerTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldGenerateUserWithContextUri() {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create().get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .assertNext(result -> assertThat(result.registeredUser().contextUri().asString()).isEqualTo("sonata:user:" + result.registeredUser().id().value()))
+                .verifyComplete();
+    }
+
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
 

@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.model;
 
+import com.odeyalo.sonata.common.context.ContextUri;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,5 +25,10 @@ public class User {
 
     public boolean isEmailConfirmed() {
         return emailConfirmed;
+    }
+
+    @NotNull
+    public ContextUri contextUri() {
+        return id.toContextUri();
     }
 }

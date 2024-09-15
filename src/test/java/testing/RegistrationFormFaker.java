@@ -15,7 +15,7 @@ public final class RegistrationFormFaker {
     private final Faker faker = Faker.instance();
 
     public RegistrationFormFaker() {
-        InputPassword randomPassword = InputPassword.valueOf(faker.internet().password(8, 32, true, false, true));
+        InputPassword randomPassword = InputPassword.valueOf(faker.internet().password(8, 32, true, false, true) + "123");
         Birthdate birthdate = Birthdate.of(faker.date().birthday(18, 60));
 
         builder
