@@ -21,7 +21,15 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
     @NotNull
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
 
-        Mono<RegistrationResult> processRegistration = Mono.just(
+        return userService.findByEmail(form.email())
+                .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
+                .switchIfEmpty(Mono.defer(() -> processRegistration(form)))
+                .cast(RegistrationResult.class);
+    }
+
+    @NotNull
+    private Mono<RegistrationResult> processRegistration(@NotNull final RegistrationForm form) {
+        return Mono.just(
                 RegistrationResult.completedFor(
                         new User(
                                 UserId.random(),
@@ -34,10 +42,5 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
                         )
                 )
         );
-
-        return userService.findByEmail(form.email())
-                .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
-                .switchIfEmpty(processRegistration)
-                .cast(RegistrationResult.class);
     }
 }
