@@ -29,18 +29,17 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
 
     @NotNull
     private Mono<RegistrationResult> processRegistration(@NotNull final RegistrationForm form) {
-        return Mono.just(
-                RegistrationResult.completedFor(
-                        new User(
-                                UserId.random(),
-                                form.email(),
-                                passwordEncoder.encode(form.password()),
-                                form.gender(),
-                                true,
-                                false,
-                                form.birthdate()
-                        )
-                )
+        User user = new User(
+                UserId.random(),
+                form.email(),
+                passwordEncoder.encode(form.password()),
+                form.gender(),
+                true,
+                false,
+                form.birthdate()
         );
+
+        return userService.save(user)
+                .map(RegistrationResult::completedFor);
     }
 }

@@ -6,15 +6,15 @@ import com.odeyalo.sonata.piano.model.UserId;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
+
 public interface UserService {
+
+    @NotNull
+    Mono<User> save(@NotNull final User user);
 
     @NotNull
     Mono<User> findById(@NotNull UserId id);
 
-
     @NotNull
     Mono<User> findByEmail(@NotNull Email email);
-
-
-
 }

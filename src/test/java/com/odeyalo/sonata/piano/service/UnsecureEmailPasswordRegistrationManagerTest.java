@@ -168,6 +168,27 @@ class UnsecureEmailPasswordRegistrationManagerTest {
                 .verify();
     }
 
+    @Test
+    void shouldSaveRegisteredUser() {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder()
+                .build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create()
+                .withEmail("miku.nakano@gmail.com")
+                .get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .expectNextCount(1)
+                .verifyComplete();
+
+        // verify that user is saved and we can't register with the same values(email, for example)
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .expectError(EmailAddressAlreadyInUseException.class)
+                .verify();
+    }
+
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
         private final List<User> registeredUsers = new ArrayList<>();

@@ -27,6 +27,16 @@ public final class InMemoryUserService implements UserService {
 
     @Override
     @NotNull
+    public Mono<User> save(@NotNull final  User user) {
+        return Mono.fromCallable(() -> {
+            users.put(user.id(), user);
+
+            return user;
+        });
+    }
+
+    @Override
+    @NotNull
     public Mono<User> findById(@NotNull final UserId id) {
         return Mono.justOrEmpty(
                 users.get(id)
