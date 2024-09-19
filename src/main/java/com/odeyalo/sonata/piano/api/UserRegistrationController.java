@@ -40,16 +40,6 @@ public final class UserRegistrationController {
             );
         }
 
-        String pattern = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
-
-        if ( !Pattern.compile(pattern).matcher(registrationFormDto.password()).matches() ) {
-            return Mono.just(
-                    ResponseEntity
-                            .badRequest()
-                            .body(ExceptionMessage.of("Password must contain at least 8 characters and at least 1 number"))
-            );
-        }
-
         if ( LocalDate.now().minusYears(13).isBefore(registrationFormDto.birthdate()) ) {
             return Mono.just(
                     ResponseEntity
