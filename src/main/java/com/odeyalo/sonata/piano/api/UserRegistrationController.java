@@ -3,6 +3,12 @@ package com.odeyalo.sonata.piano.api;
 import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
 import com.odeyalo.sonata.piano.api.dto.RegistrationFormDto;
+import com.odeyalo.sonata.piano.model.Birthdate;
+import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.model.InputPassword;
+import com.odeyalo.sonata.piano.service.EmailPasswordRegistrationManager;
+import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.support.web.HttpStatuses;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +24,11 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/v1/signup")
 public final class UserRegistrationController {
+    private final EmailPasswordRegistrationManager registrationManager;
+
+    public UserRegistrationController(final EmailPasswordRegistrationManager registrationManager) {
+        this.registrationManager = registrationManager;
+    }
 
     @PostMapping("/email")
     public Mono<ResponseEntity<?>> emailRegistrationStrategy(@RequestBody @NotNull final RegistrationFormDto registrationFormDto) {
@@ -47,10 +58,15 @@ public final class UserRegistrationController {
             );
         }
 
-        return Mono.just(
-                ResponseEntity.ok(
-                        new EmailConfirmationRequiredResponseDto()
-                )
-        );
+        RegistrationForm form = RegistrationForm.builder()
+                .email(Email.valueOf(registrationFormDto.email()))
+                .gender(registrationFormDto.gender())
+                .password(InputPassword.valueOf(registrationFormDto.password()))
+                .birthdate(Birthdate.of(registrationFormDto.birthdate()))
+                .build();
+
+        return registrationManager.registerUser(form)
+                .map(it -> new EmailConfirmationRequiredResponseDto())
+                .map(HttpStatuses::ok);
     }
 }

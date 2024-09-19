@@ -5,6 +5,8 @@ import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.UserId;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
@@ -14,6 +16,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 public final class InMemoryUserService implements UserService {
     private final Map<UserId, User> users;
 
@@ -21,6 +24,7 @@ public final class InMemoryUserService implements UserService {
         this.users = users;
     }
 
+    @Autowired
     public InMemoryUserService(final List<User> users) {
         this.users = users.stream()
                 .collect(Collectors.toMap(User::id, Function.identity()));

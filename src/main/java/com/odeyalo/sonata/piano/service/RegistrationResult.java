@@ -28,7 +28,7 @@ public class RegistrationResult {
         return of(NextAction.COMPLETED, user);
     }
 
-    enum NextAction {
+    public enum NextAction {
         CONFIRM_EMAIL,
         COMPLETED
     }
