@@ -32,13 +32,6 @@ public final class UserRegistrationController {
 
     @PostMapping("/email")
     public Mono<ResponseEntity<?>> emailRegistrationStrategy(@RequestBody @NotNull final RegistrationFormDto registrationFormDto) {
-        if ( !EmailValidator.getInstance().isValid(registrationFormDto.email()) ) {
-            return Mono.just(
-                    ResponseEntity
-                            .badRequest()
-                            .body(ExceptionMessage.of("Email has invalid format"))
-            );
-        }
 
         if ( LocalDate.now().minusYears(13).isBefore(registrationFormDto.birthdate()) ) {
             return Mono.just(
