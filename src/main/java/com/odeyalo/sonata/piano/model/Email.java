@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.model;
 
+import com.odeyalo.sonata.piano.exception.EmailRegexException;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,7 @@ public record Email(@NotNull String value) {
      */
     public Email {
         if ( !EmailValidator.getInstance().isValid(value) ) {
-            throw new IllegalArgumentException("Invalid email: Email address is not match the email address pattern");
+            throw new EmailRegexException("Invalid email: Email address does not match the email address pattern");
         }
     }
 

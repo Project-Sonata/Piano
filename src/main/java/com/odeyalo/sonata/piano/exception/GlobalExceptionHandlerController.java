@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.exception;
 
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
+import com.odeyalo.sonata.piano.model.Email;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,6 +9,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public final class GlobalExceptionHandlerController {
+
+    @ExceptionHandler(EmailRegexException.class)
+    public ResponseEntity<ExceptionMessage> emailRegexException(@NotNull final EmailRegexException ex) {
+        final ExceptionMessage exceptionMessage = ExceptionMessage.of(
+                "Email has invalid format"
+        );
+
+        return ResponseEntity
+                .badRequest()
+                .body(exceptionMessage);
+    }
 
     @ExceptionHandler(PasswordRegexException.class)
     public ResponseEntity<ExceptionMessage> handlePasswordRegexException(@NotNull final PasswordRegexException ex) {
