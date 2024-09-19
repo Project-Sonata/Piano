@@ -31,9 +31,9 @@ public final class UserRegistrationController {
     }
 
     @PostMapping("/email")
-    public Mono<ResponseEntity<?>> emailRegistrationStrategy(@RequestBody @NotNull final RegistrationFormDto registrationFormDto) {
+    public Mono<ResponseEntity<?>> emailRegistrationStrategy(@NotNull final RegistrationForm registrationForm) {
 
-        if ( LocalDate.now().minusYears(13).isBefore(registrationFormDto.birthdate()) ) {
+        if ( LocalDate.now().minusYears(13).isBefore(registrationForm.birthdate().toLocalDate()) ) {
             return Mono.just(
                     ResponseEntity
                             .badRequest()
@@ -41,14 +41,8 @@ public final class UserRegistrationController {
             );
         }
 
-        RegistrationForm form = RegistrationForm.builder()
-                .email(Email.valueOf(registrationFormDto.email()))
-                .gender(registrationFormDto.gender())
-                .password(InputPassword.valueOf(registrationFormDto.password()))
-                .birthdate(Birthdate.of(registrationFormDto.birthdate()))
-                .build();
 
-        return registrationManager.registerUser(form)
+        return registrationManager.registerUser(registrationForm)
                 .map(it -> new EmailConfirmationRequiredResponseDto())
                 .map(HttpStatuses::ok);
     }
