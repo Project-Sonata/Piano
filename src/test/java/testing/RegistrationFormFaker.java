@@ -54,4 +54,8 @@ public final class RegistrationFormFaker {
         builder.birthdate(Birthdate.of(birthdate));
         return this;
     }
+
+    public RegistrationFormFaker withBirthdate(@NotNull final String date) {
+        return withBirthdate(LocalDate.parse(date));
+    }
 }

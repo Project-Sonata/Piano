@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.piano.service;
 
+import com.odeyalo.sonata.piano.exception.BirthdatePolicyViolationException;
 import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
+import com.odeyalo.sonata.piano.model.Birthdate;
 import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
@@ -19,8 +21,11 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.odeyalo.sonata.piano.service.RegistrationResult.NextAction.COMPLETED;
+import static com.odeyalo.sonata.piano.service.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
+import static com.odeyalo.sonata.piano.service.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.olderThan;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UnsecureEmailPasswordRegistrationManagerTest {
@@ -170,6 +175,22 @@ class UnsecureEmailPasswordRegistrationManagerTest {
     }
 
     @Test
+    void shouldReturnErrorIfBirthdatePolicyIsViolated() {
+        UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder()
+                .withBirthdatePolicy(alwaysDeny())
+                .build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create()
+                .withBirthdate("2024-04-24")
+                .get();
+
+        testable.registerUser(registrationForm)
+                .as(StepVerifier::create)
+                .expectError(BirthdatePolicyViolationException.class)
+                .verify();
+    }
+
+    @Test
     void shouldSaveRegisteredUser() {
         UnsecureEmailPasswordRegistrationManager testable = TestableBuilder.builder()
                 .build();
@@ -193,6 +214,7 @@ class UnsecureEmailPasswordRegistrationManagerTest {
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
         private final List<User> registeredUsers = new ArrayList<>();
+        private BirthdatePolicy birthdatePolicy = olderThan(13);
 
         public static TestableBuilder builder() {
             return new TestableBuilder();
@@ -214,11 +236,32 @@ class UnsecureEmailPasswordRegistrationManagerTest {
             return this;
         }
 
+        public TestableBuilder withBirthdatePolicy(@NotNull final BirthdatePolicy birthdatePolicy) {
+            this.birthdatePolicy = birthdatePolicy;
+            return this;
+        }
+
         public UnsecureEmailPasswordRegistrationManager build() {
 
             return new UnsecureEmailPasswordRegistrationManager(
                     new DefaultUserFactory(passwordEncoder),
-                    new InMemoryUserService(registeredUsers)
+                    new InMemoryUserService(registeredUsers),
+                    birthdatePolicy
+            );
+        }
+    }
+
+    static class BirthdatePolicies {
+
+        static BirthdatePolicy olderThan(final int minimalAllowedAge) {
+            return new SimplePridicateBirthdatePolicy(
+                    birthdate -> birthdate.isOlderThan(minimalAllowedAge)
+            );
+        }
+
+        static BirthdatePolicy alwaysDeny() {
+            return new SimplePridicateBirthdatePolicy(
+                    birthdate -> false
             );
         }
     }

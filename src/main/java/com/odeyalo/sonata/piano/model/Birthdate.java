@@ -46,6 +46,12 @@ public record Birthdate(@NotNull LocalDate value) {
         return value;
     }
 
+    public boolean isOlderThan(final int minimalAllowedAge) {
+        return LocalDate.now()
+                .minusYears(minimalAllowedAge)
+                .isAfter(value);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if ( obj == this ) return true;
