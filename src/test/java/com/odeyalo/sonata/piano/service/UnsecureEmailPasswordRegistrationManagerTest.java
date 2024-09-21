@@ -2,17 +2,16 @@ package com.odeyalo.sonata.piano.service;
 
 import com.odeyalo.sonata.piano.exception.BirthdatePolicyViolationException;
 import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
-import com.odeyalo.sonata.piano.model.Birthdate;
 import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
+import com.odeyalo.sonata.piano.service.registration.support.BirthdatePolicyRegistrationFormValidationStep;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import reactor.test.StepVerifier;
 import testing.RegistrationFormFaker;
 import testing.UserFaker;
@@ -21,7 +20,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.odeyalo.sonata.piano.service.RegistrationResult.NextAction.COMPLETED;
 import static com.odeyalo.sonata.piano.service.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
@@ -246,8 +244,14 @@ class UnsecureEmailPasswordRegistrationManagerTest {
             return new UnsecureEmailPasswordRegistrationManager(
                     new DefaultUserFactory(passwordEncoder),
                     new InMemoryUserService(registeredUsers),
-                    birthdatePolicy
+                    newRegistrationFormValidator()
             );
+        }
+
+        private RegistrationFormValidator newRegistrationFormValidator() {
+            return new ChainRegistrationFormValidator(List.of(
+                    new BirthdatePolicyRegistrationFormValidationStep(birthdatePolicy)
+            ));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.odeyalo.sonata.piano.service;
 
-import com.odeyalo.sonata.piano.exception.BirthdatePolicyViolationException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.UserFactory;
 import org.jetbrains.annotations.NotNull;
@@ -11,35 +10,22 @@ import reactor.core.publisher.Mono;
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
     private final UserFactory userFactory;
     private final UserService userService;
-    private final BirthdatePolicy birthdatePolicy;
+    private final RegistrationFormValidator registrationFormValidator;
 
     public UnsecureEmailPasswordRegistrationManager(final UserFactory userFactory,
                                                     final UserService userService,
-                                                    final BirthdatePolicy birthdatePolicy) {
+                                                    final RegistrationFormValidator registrationFormValidator) {
         this.userFactory = userFactory;
         this.userService = userService;
-        this.birthdatePolicy = birthdatePolicy;
+        this.registrationFormValidator = registrationFormValidator;
     }
 
     @Override
     @NotNull
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
 
-
-        return birthdatePolicy.isAllowed(form.birthdate())
-                .flatMap(decision -> {
-                    if (decision) {
-                        return tryRegisterUser(form);
-                    }
-                    return birthdateViolationError();
-                });
-    }
-
-    @NotNull
-    private static Mono<RegistrationResult> birthdateViolationError() {
-        return Mono.defer(() -> Mono.error(
-                new BirthdatePolicyViolationException()
-        ));
+        return registrationFormValidator.validate(form)
+                .then(Mono.defer(() -> tryRegisterUser(form)));
     }
 
     private @NotNull Mono<RegistrationResult> tryRegisterUser(final @NotNull RegistrationForm form) {

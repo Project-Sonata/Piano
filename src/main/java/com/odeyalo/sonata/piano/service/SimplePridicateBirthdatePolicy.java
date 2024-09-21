@@ -6,6 +6,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Predicate;
 
+/**
+ * Primary used for tests
+ */
 public final class SimplePridicateBirthdatePolicy implements BirthdatePolicy {
     private final Predicate<Birthdate> delegate;
 
