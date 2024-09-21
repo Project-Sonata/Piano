@@ -1,6 +1,7 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.support;
 
 import com.odeyalo.sonata.piano.exception.RegistrationFormPolicyViolationException;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 

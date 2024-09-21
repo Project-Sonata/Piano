@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.policy;
 
 import com.odeyalo.sonata.piano.model.Birthdate;
 import org.jetbrains.annotations.NotNull;

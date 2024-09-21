@@ -1,7 +1,9 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.email;
 
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.UserFactory;
+import com.odeyalo.sonata.piano.service.UserService;
+import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

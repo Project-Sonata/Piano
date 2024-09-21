@@ -2,24 +2,17 @@ package com.odeyalo.sonata.piano.api;
 
 import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
-import com.odeyalo.sonata.piano.api.dto.RegistrationFormDto;
-import com.odeyalo.sonata.piano.model.Birthdate;
-import com.odeyalo.sonata.piano.model.Email;
-import com.odeyalo.sonata.piano.model.InputPassword;
-import com.odeyalo.sonata.piano.service.EmailPasswordRegistrationManager;
-import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.service.registration.email.EmailPasswordRegistrationManager;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import com.odeyalo.sonata.piano.support.web.HttpStatuses;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/v1/signup")

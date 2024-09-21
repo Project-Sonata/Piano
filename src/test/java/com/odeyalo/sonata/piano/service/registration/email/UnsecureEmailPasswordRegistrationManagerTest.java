@@ -1,11 +1,16 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.email;
 
 import com.odeyalo.sonata.piano.exception.BirthdatePolicyViolationException;
 import com.odeyalo.sonata.piano.exception.EmailAddressAlreadyInUseException;
 import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
+import com.odeyalo.sonata.piano.service.InMemoryUserService;
+import com.odeyalo.sonata.piano.service.registration.policy.BirthdatePolicy;
+import com.odeyalo.sonata.piano.service.registration.policy.SimplePridicateBirthdatePolicy;
 import com.odeyalo.sonata.piano.service.registration.support.BirthdatePolicyRegistrationFormValidationStep;
+import com.odeyalo.sonata.piano.service.registration.support.ChainRegistrationFormValidator;
+import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +26,9 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.odeyalo.sonata.piano.service.RegistrationResult.NextAction.COMPLETED;
-import static com.odeyalo.sonata.piano.service.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
-import static com.odeyalo.sonata.piano.service.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.olderThan;
+import static com.odeyalo.sonata.piano.service.registration.email.RegistrationResult.NextAction.COMPLETED;
+import static com.odeyalo.sonata.piano.service.registration.email.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
+import static com.odeyalo.sonata.piano.service.registration.email.UnsecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.olderThan;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UnsecureEmailPasswordRegistrationManagerTest {

@@ -1,6 +1,6 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.support;
 
-import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidationStep;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;

@@ -1,8 +1,8 @@
 package com.odeyalo.sonata.piano.service.registration.support;
 
 import com.odeyalo.sonata.piano.exception.BirthdatePolicyViolationException;
-import com.odeyalo.sonata.piano.service.BirthdatePolicy;
-import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.service.registration.policy.BirthdatePolicy;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

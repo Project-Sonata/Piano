@@ -5,7 +5,7 @@ import com.odeyalo.sonata.piano.model.Birthdate;
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.InputPassword;
-import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;

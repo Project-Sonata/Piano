@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.email;
 
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;

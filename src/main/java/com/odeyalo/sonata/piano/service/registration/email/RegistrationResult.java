@@ -1,4 +1,4 @@
-package com.odeyalo.sonata.piano.service;
+package com.odeyalo.sonata.piano.service.registration.email;
 
 import com.odeyalo.sonata.piano.model.User;
 import lombok.AllArgsConstructor;

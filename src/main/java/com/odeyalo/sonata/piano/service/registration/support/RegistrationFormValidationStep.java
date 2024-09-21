@@ -1,13 +1,13 @@
 package com.odeyalo.sonata.piano.service.registration.support;
 
 import com.odeyalo.sonata.piano.exception.RegistrationFormPolicyViolationException;
-import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 /**
  * A single step to validate the given {@link RegistrationForm},
- * used by {@link com.odeyalo.sonata.piano.service.ChainRegistrationFormValidator}
+ * used by {@link ChainRegistrationFormValidator}
  */
 public interface RegistrationFormValidationStep {
     /**

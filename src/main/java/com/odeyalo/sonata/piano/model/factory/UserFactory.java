@@ -1,7 +1,7 @@
 package com.odeyalo.sonata.piano.model.factory;
 
 import com.odeyalo.sonata.piano.model.User;
-import com.odeyalo.sonata.piano.service.RegistrationForm;
+import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 
 /**
