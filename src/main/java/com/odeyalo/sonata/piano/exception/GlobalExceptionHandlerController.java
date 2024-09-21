@@ -1,7 +1,6 @@
 package com.odeyalo.sonata.piano.exception;
 
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
-import com.odeyalo.sonata.piano.model.Email;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +25,15 @@ public final class GlobalExceptionHandlerController {
         final ExceptionMessage exceptionMessage = ExceptionMessage.of(
                 "Password must contain at least 8 characters and at least 1 number"
         );
+
+        return ResponseEntity
+                .badRequest()
+                .body(exceptionMessage);
+    }
+
+    @ExceptionHandler(BirthdatePolicyViolationException.class)
+    public ResponseEntity<ExceptionMessage> handleBirthdatePolicyViolationException(@NotNull final BirthdatePolicyViolationException ex) {
+        final ExceptionMessage exceptionMessage = ExceptionMessage.of("User must be older than 13 years");
 
         return ResponseEntity
                 .badRequest()
