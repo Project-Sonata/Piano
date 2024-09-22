@@ -18,6 +18,7 @@ public final class SecureEmailPasswordRegistrationManager implements EmailPasswo
     private final UserFactory userFactory;
     private final UserService userService;
     private final RegistrationFormValidator registrationFormValidator;
+    private final EmailConfirmationStrategy emailConfirmationStrategy;
 
     @Override
     @NotNull
@@ -32,6 +33,7 @@ public final class SecureEmailPasswordRegistrationManager implements EmailPasswo
         final User user = userFactory.createUnactivatedUser(form);
 
         return userService.save(user)
+                .flatMap(u -> emailConfirmationStrategy.sendConfirmationFor(u.email()).thenReturn(u))
                 .map(RegistrationResult::confirmEmailFor);
     }
 }

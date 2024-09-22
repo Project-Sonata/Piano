@@ -214,10 +214,26 @@ class SecureEmailPasswordRegistrationManagerTest {
                 .verify();
     }
 
+    @Test
+    void shouldSendConfirmationCodeToProvidedEmail() {
+        MockEmailConfirmationStrategy sender = new MockEmailConfirmationStrategy();
+
+        SecureEmailPasswordRegistrationManager testable = TestableBuilder.builder()
+                .sendConfirmationWith(sender)
+                .build();
+
+        RegistrationForm registrationForm = RegistrationFormFaker.create().get();
+
+        testable.registerUser(registrationForm).block();
+
+        assertThat(sender.wasSent()).isTrue();
+    }
+
     private static class TestableBuilder {
         private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
         private final List<User> registeredUsers = new ArrayList<>();
         private BirthdatePolicy birthdatePolicy = olderThan(13);
+        private EmailConfirmationStrategy sender = new MockEmailConfirmationStrategy();
 
         public static TestableBuilder builder() {
             return new TestableBuilder();
@@ -249,7 +265,8 @@ class SecureEmailPasswordRegistrationManagerTest {
             return new SecureEmailPasswordRegistrationManager(
                     new DefaultUserFactory(passwordEncoder),
                     new InMemoryUserService(registeredUsers),
-                    newRegistrationFormValidator()
+                    newRegistrationFormValidator(),
+                    sender
             );
         }
 
@@ -257,6 +274,11 @@ class SecureEmailPasswordRegistrationManagerTest {
             return new ChainRegistrationFormValidator(List.of(
                     new BirthdatePolicyRegistrationFormValidationStep(birthdatePolicy)
             ));
+        }
+
+        public TestableBuilder sendConfirmationWith(final EmailConfirmationStrategy sender) {
+            this.sender = sender;
+            return this;
         }
     }
 
