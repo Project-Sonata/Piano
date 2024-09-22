@@ -26,7 +26,6 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.odeyalo.sonata.piano.service.registration.email.RegistrationResult.NextAction.COMPLETED;
 import static com.odeyalo.sonata.piano.service.registration.email.RegistrationResult.NextAction.CONFIRM_EMAIL;
 import static com.odeyalo.sonata.piano.service.registration.email.SecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
 import static com.odeyalo.sonata.piano.service.registration.email.SecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.olderThan;
