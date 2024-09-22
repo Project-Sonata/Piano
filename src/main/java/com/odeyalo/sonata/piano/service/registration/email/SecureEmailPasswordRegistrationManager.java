@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+/**
+ * An implementation of {@link EmailPasswordRegistrationManager} that requires email confirmation to activate the user
+ */
 @Component
 @RequiredArgsConstructor
 public final class SecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
