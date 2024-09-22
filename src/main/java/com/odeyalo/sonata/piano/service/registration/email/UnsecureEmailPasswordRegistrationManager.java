@@ -5,12 +5,7 @@ import com.odeyalo.sonata.piano.model.factory.UserFactory;
 import com.odeyalo.sonata.piano.service.UserService;
 import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j;
-import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
