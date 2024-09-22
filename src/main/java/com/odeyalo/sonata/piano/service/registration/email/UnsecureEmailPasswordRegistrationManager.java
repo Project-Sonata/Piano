@@ -4,23 +4,22 @@ import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.UserFactory;
 import com.odeyalo.sonata.piano.service.UserService;
 import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
     private final UserFactory userFactory;
     private final UserService userService;
     private final RegistrationFormValidator registrationFormValidator;
-
-    public UnsecureEmailPasswordRegistrationManager(final UserFactory userFactory,
-                                                    final UserService userService,
-                                                    final RegistrationFormValidator registrationFormValidator) {
-        this.userFactory = userFactory;
-        this.userService = userService;
-        this.registrationFormValidator = registrationFormValidator;
-    }
 
     @Override
     @NotNull
@@ -30,7 +29,8 @@ public final class UnsecureEmailPasswordRegistrationManager implements EmailPass
                 .then(Mono.defer(() -> tryRegisterUser(form)));
     }
 
-    private @NotNull Mono<RegistrationResult> tryRegisterUser(final @NotNull RegistrationForm form) {
+    @NotNull
+    private Mono<RegistrationResult> tryRegisterUser(@NotNull final RegistrationForm form) {
         final User user = userFactory.createUser(form);
         return userService.save(user)
                 .map(RegistrationResult::completedFor);
