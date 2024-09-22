@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.odeyalo.sonata.piano.service.registration.email.RegistrationResult.NextAction.COMPLETED;
+import static com.odeyalo.sonata.piano.service.registration.email.RegistrationResult.NextAction.CONFIRM_EMAIL;
 import static com.odeyalo.sonata.piano.service.registration.email.SecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.alwaysDeny;
 import static com.odeyalo.sonata.piano.service.registration.email.SecureEmailPasswordRegistrationManagerTest.BirthdatePolicies.olderThan;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,14 +35,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SecureEmailPasswordRegistrationManagerTest {
 
     @Test
-    void shouldReturnCompletedStatusForValidRegistrationForm() {
+    void shouldReturnEmailConfirmationRequiredStatusForValidRegistrationForm() {
         SecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
 
         RegistrationForm registrationForm = RegistrationFormFaker.create().get();
 
         testable.registerUser(registrationForm)
                 .as(StepVerifier::create)
-                .assertNext(result -> assertThat(result.nextStep()).isEqualTo(COMPLETED))
+                .assertNext(result -> assertThat(result.nextStep()).isEqualTo(CONFIRM_EMAIL))
                 .verifyComplete();
     }
 

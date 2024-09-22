@@ -28,6 +28,6 @@ public final class SecureEmailPasswordRegistrationManager implements EmailPasswo
     private Mono<RegistrationResult> tryRegisterUser(@NotNull final RegistrationForm form) {
         final User user = userFactory.createUser(form);
         return userService.save(user)
-                .map(RegistrationResult::completedFor);
+                .map(RegistrationResult::confirmEmailFor);
     }
 }
