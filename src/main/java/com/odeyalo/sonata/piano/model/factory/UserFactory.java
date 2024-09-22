@@ -11,8 +11,16 @@ public interface UserFactory {
     /**
      * Create user based on the registration form
      * @param form registration form provided by user
-     * @return created user
+     * @return created {@link User}
      */
     @NotNull
     User createUser(@NotNull RegistrationForm form);
+
+    /**
+     * Create unactivated user from the given registration form
+     * @param form registration form provided by user
+     * @return created {@link User}
+     */
+    @NotNull
+    User createUnactivatedUser(@NotNull RegistrationForm form);
 }

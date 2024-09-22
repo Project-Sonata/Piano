@@ -61,14 +61,14 @@ class SecureEmailPasswordRegistrationManagerTest {
     }
 
     @Test
-    void shouldReturnActivatedUserAfterRegistrationComplete() {
+    void shouldReturnNotActivatedUserAfterRegistrationComplete() {
         SecureEmailPasswordRegistrationManager testable = TestableBuilder.builder().build();
 
         RegistrationForm registrationForm = RegistrationFormFaker.create().get();
 
         testable.registerUser(registrationForm)
                 .as(StepVerifier::create)
-                .assertNext(result -> assertThat(result.registeredUser().isActivated()).isTrue())
+                .assertNext(result -> assertThat(result.registeredUser().isActivated()).isFalse())
                 .verifyComplete();
     }
 
