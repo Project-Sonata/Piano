@@ -16,6 +16,15 @@ configurations {
 repositories {
     mavenCentral()
     mavenLocal()
+
+    maven {
+        name = "GitHub-Packages"
+        url = "https://maven.pkg.github.com/Project-Sonata/Suite"
+        credentials {
+            username = System.getenv("GITHUB_USERNAME")
+            password = System.getenv("GITHUB_ACCESS_TOKEN")
+        }
+    }
 }
 
 dependencies {
