@@ -6,10 +6,8 @@ import com.odeyalo.sonata.piano.service.UserService;
 import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-//@Component
 @RequiredArgsConstructor
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
     private final UserFactory userFactory;
