@@ -27,4 +27,19 @@ public final class DefaultUserFactory implements UserFactory {
                 form.birthdate()
         );
     }
+
+    @Override
+    @NotNull
+    public User createUnactivatedUser(@NotNull final RegistrationForm form) {
+
+        return new User(
+                UserId.random(),
+                form.email(),
+                passwordEncoder.encode(form.password()),
+                form.gender(),
+                false,
+                false,
+                form.birthdate()
+        );
+    }
 }
