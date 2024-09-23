@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
 import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.service.mail.EmailTransport;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 import testing.UserFaker;
@@ -14,9 +16,9 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
     void shouldSendConfirmationCodeToProvidedEmail() {
         MockEmailTransport emailTransport = new MockEmailTransport();
 
-        var testable = new ConfirmationCodeEmailConfirmationStrategy(
-                emailTransport
-        );
+        var testable = TestableBuilder.builder()
+                .sendWith(emailTransport)
+                .build();
 
         testable.sendConfirmationFor(Email.valueOf("odeyalo@gmail.com"), UserFaker.create().get())
                 .as(StepVerifier::create)
@@ -26,4 +28,23 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
         assertThat(emailTransport.getFirstMessage().to()).isEqualTo(Email.valueOf("odeyalo@gmail.com"));
     }
 
+
+    static class TestableBuilder {
+        private EmailTransport emailTransport = new MockEmailTransport();
+
+        public static TestableBuilder builder() {
+            return new TestableBuilder();
+        }
+
+        public TestableBuilder sendWith(@NotNull final EmailTransport transport) {
+            this.emailTransport = transport;
+            return this;
+        }
+
+        public ConfirmationCodeEmailConfirmationStrategy build() {
+            return new ConfirmationCodeEmailConfirmationStrategy(
+                    emailTransport
+            );
+        }
+    }
 }
