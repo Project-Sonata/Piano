@@ -1,8 +1,7 @@
-package com.odeyalo.sonata.piano.service.registration.email;
+package com.odeyalo.sonata.piano.service.confirmation;
 
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.User;
-import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationStrategy;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;
