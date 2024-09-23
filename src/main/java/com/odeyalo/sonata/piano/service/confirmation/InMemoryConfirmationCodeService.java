@@ -2,11 +2,9 @@ package com.odeyalo.sonata.piano.service.confirmation;
 
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
