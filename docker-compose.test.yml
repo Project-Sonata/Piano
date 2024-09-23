@@ -5,4 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
+
+    environment:
+      # Used to download required dependencies from Suite module
+      GITHUB_USERNAME: ${GH_USERNAME}
+      GITHUB_ACCESS_TOKEN: ${GH_ACCESS_TOKEN}
+
     container_name: sonata-piano-tests
