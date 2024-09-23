@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-@Profile({"dev", "local"})
+@Profile({"dev", "local", "test"})
 @Log4j2
 public final class NoOpEmailTransport implements EmailTransport {
 

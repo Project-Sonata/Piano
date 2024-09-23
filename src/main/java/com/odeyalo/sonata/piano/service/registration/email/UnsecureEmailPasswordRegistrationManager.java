@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public final class UnsecureEmailPasswordRegistrationManager implements EmailPasswordRegistrationManager {
     private final UserFactory userFactory;
