@@ -3,6 +3,8 @@ package com.odeyalo.sonata.piano.service.confirmation;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -11,10 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Component
 public final class InMemoryConfirmationCodeService implements ConfirmationCodeService {
     private final Map<String, ConfirmationCode> confirmationCodes;
     private final ConfirmationCodeFactory confirmationCodeFactory;
 
+    @Autowired
     public InMemoryConfirmationCodeService(final ConfirmationCodeFactory confirmationCodeFactory) {
         this.confirmationCodeFactory = confirmationCodeFactory;
         this.confirmationCodes = new ConcurrentHashMap<>();
