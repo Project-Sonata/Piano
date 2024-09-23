@@ -1,6 +1,7 @@
-package com.odeyalo.sonata.piano.service.registration.email;
+package com.odeyalo.sonata.piano.service.confirmation;
 
 import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.model.User;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +16,7 @@ public interface EmailConfirmationStrategy {
      * {@link Mono#error(Throwable)} on any exception
      */
     @NotNull
-    Mono<Void> sendConfirmationFor(@NotNull Email emailToConfirm);
+    Mono<Void> sendConfirmationFor(@NotNull Email emailToConfirm,
+                                   @NotNull User confirmationFor);
 
 }

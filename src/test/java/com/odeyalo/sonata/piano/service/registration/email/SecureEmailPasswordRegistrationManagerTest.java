@@ -6,6 +6,7 @@ import com.odeyalo.sonata.piano.model.Gender;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
 import com.odeyalo.sonata.piano.service.InMemoryUserService;
+import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationStrategy;
 import com.odeyalo.sonata.piano.service.registration.policy.BirthdatePolicy;
 import com.odeyalo.sonata.piano.service.registration.policy.SimplePridicateBirthdatePolicy;
 import com.odeyalo.sonata.piano.service.registration.support.BirthdatePolicyRegistrationFormValidationStep;

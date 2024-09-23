@@ -3,6 +3,7 @@ package com.odeyalo.sonata.piano.service.registration.email;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.model.factory.UserFactory;
 import com.odeyalo.sonata.piano.service.UserService;
+import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationStrategy;
 import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public final class SecureEmailPasswordRegistrationManager implements EmailPasswo
         final User user = userFactory.createUnactivatedUser(form);
 
         return userService.save(user)
-                .flatMap(u -> emailConfirmationStrategy.sendConfirmationFor(u.email()).thenReturn(u))
+                .flatMap(u -> emailConfirmationStrategy.sendConfirmationFor(u.email(), u).thenReturn(u))
                 .map(RegistrationResult::confirmEmailFor);
     }
 }
