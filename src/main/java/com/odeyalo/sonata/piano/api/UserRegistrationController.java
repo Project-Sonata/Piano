@@ -26,4 +26,11 @@ public final class UserRegistrationController {
                 .map(it -> new EmailConfirmationRequiredResponseDto())
                 .map(HttpStatuses::ok);
     }
+
+
+    @PostMapping("/email/confirm")
+    public Mono<ResponseEntity<?>> emailConfirmationStrategy() {
+        return Mono.empty();
+    }
+
 }
