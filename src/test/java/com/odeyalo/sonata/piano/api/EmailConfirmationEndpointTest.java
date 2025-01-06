@@ -6,7 +6,6 @@ import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCode;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeService;
-import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import testing.api.client.PianoClient;
@@ -26,7 +23,6 @@ import testing.api.client.config.AutoConfigurePianoClient;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -108,6 +104,18 @@ class EmailConfirmationEndpointTest {
         WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
 
         answer.expectStatus().isOk();
+    }
+
+    @Test
+    void shouldReturnBadRequestIfConfirmationCodeIsInvalid() {
+        RegistrationFormDto form = RegistrationFormDto.randomForm()
+                .withEmail("odeyalo@gmail.com");
+
+        pianoClient.sendRegistrationForm(form);
+
+        WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(INVALID_CONFIRMATION_CODE);
+
+        answer.expectStatus().isBadRequest();
     }
 
     @NotNull

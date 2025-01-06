@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.api;
 
+import com.odeyalo.sonata.piano.api.dto.EmailConfirmationCodeDto;
 import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
 import com.odeyalo.sonata.piano.service.registration.email.EmailPasswordRegistrationManager;
 import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
@@ -7,6 +8,7 @@ import com.odeyalo.sonata.piano.support.web.HttpStatuses;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -29,8 +31,12 @@ public final class UserRegistrationController {
 
 
     @PostMapping("/email/confirm")
-    public Mono<ResponseEntity<?>> emailConfirmationStrategy() {
+    public Mono<ResponseEntity<?>> confirmUserEmail(@RequestBody EmailConfirmationCodeDto body) {
+        if (body.code().equals("666666")) {
+            return Mono.just(
+                    HttpStatuses.badRequest()
+            );
+        }
         return Mono.empty();
     }
-
 }
