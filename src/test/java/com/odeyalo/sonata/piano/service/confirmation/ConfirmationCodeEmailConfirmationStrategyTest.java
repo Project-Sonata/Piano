@@ -116,6 +116,20 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldReturnFalseForInvalidConfirmationCode() {
+        // given
+        var testable = TestableBuilder.builder()
+                .build();
+
+        // when
+        testable.confirmCode("012")
+                .as(StepVerifier::create)
+                // then
+                .expectNext(Boolean.FALSE)
+                .verifyComplete();
+    }
+
     static class TestableBuilder {
         private EmailTransport emailTransport = new MockEmailTransport();
         private EmailConfirmationMessageTemplateFactory templateMessageFactory = new PlainTextEmailConfirmationMessageTemplateFactory();

@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
+import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.mail.EmailTransport;
@@ -33,9 +34,9 @@ public final class ConfirmationCodeEmailConfirmationStrategy implements EmailCon
     @Override
     @NotNull
     public Mono<Boolean> confirmCode(@NotNull final String code) {
-        return Mono.just(Boolean.TRUE);
+        return confirmationCodeService.loadConfirmationCodeByValue(code)
+                .map(confirmationCode -> true)
+                .defaultIfEmpty(false)
+                .onErrorReturn(InvalidConfirmationCodeException.class, false);
     }
 }
-
-
-
