@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public final class ConfirmationCodeEmailConfirmationStrategy implements EmailConfirmationStrategy {
+public final class ConfirmationCodeEmailConfirmationStrategy implements EmailConfirmationStrategy, EmailConfirmationCodeChecker {
     private final ConfirmationCodeService confirmationCodeService;
     private final EmailConfirmationMessageTemplateFactory confirmationMessageTemplateFactory;
     private final EmailTransport emailTransport;
@@ -28,6 +28,12 @@ public final class ConfirmationCodeEmailConfirmationStrategy implements EmailCon
         return confirmationCodeService.newConfirmationCodeFor(user)
                 .map(confirmationCode -> confirmationMessageTemplateFactory.createEmailMessage(emailToConfirm, confirmationCode))
                 .flatMap(emailTransport::sendEmail);
+    }
+
+    @Override
+    @NotNull
+    public Mono<Boolean> confirmCode(@NotNull final String code) {
+        return Mono.just(Boolean.TRUE);
     }
 }
 

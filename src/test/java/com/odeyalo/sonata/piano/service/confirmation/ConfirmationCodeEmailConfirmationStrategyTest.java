@@ -1,6 +1,8 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
+import com.odeyalo.sonata.piano.config.support.ConfirmationCodeFactories;
 import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.mail.EmailMessage;
 import com.odeyalo.sonata.piano.service.mail.EmailTransport;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +15,13 @@ import testing.mock.StaticEmailConfirmationMessageTemplateFactory;
 
 import java.time.Instant;
 
+import static com.odeyalo.sonata.piano.config.support.ConfirmationCodeFactories.staticImpl;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfirmationCodeEmailConfirmationStrategyTest {
+
+    public static final User USER = UserFaker.create().get();
+    public static final Email EMAIL_TO_CONFIRM = Email.valueOf("odeyalo@gmail.com");
 
     @Test
     void shouldSendConfirmationCodeToProvidedEmail() {
@@ -91,6 +97,24 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
         assertThat(emailTransport.getFirstMessage().body()).isEqualTo("Your confirmation code: 123");
     }
 
+    @Test
+    void shouldReturnTrueForValidConfirmationCode() {
+        // given
+        ConfirmationCodeFactory codeFactory = staticImpl("444");
+
+        var testable = TestableBuilder.builder()
+                .confirmationCodeFactory(codeFactory)
+                .build();
+
+        testable.sendConfirmationFor(EMAIL_TO_CONFIRM, USER).block();
+
+        // when
+        testable.confirmCode("444")
+                .as(StepVerifier::create)
+                // then
+                .expectNext(Boolean.TRUE)
+                .verifyComplete();
+    }
 
     static class TestableBuilder {
         private EmailTransport emailTransport = new MockEmailTransport();
