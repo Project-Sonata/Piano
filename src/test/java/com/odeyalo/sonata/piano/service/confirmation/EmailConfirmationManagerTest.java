@@ -4,15 +4,14 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static com.odeyalo.sonata.piano.model.ConfirmationStatus.DENIED;
 import static com.odeyalo.sonata.piano.model.ConfirmationStatus.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EmailConfirmationManagerTest {
 
-
     @Test
     void shouldConfirmEmailWhenCorrectConfirmationCodeIsUsed() {
-
         final EmailConfirmationManager testable = new EmailConfirmationManager(
                 code -> Mono.just(Boolean.TRUE)
         );
@@ -20,6 +19,18 @@ class EmailConfirmationManagerTest {
         testable.confirmEmail("111111")
                 .as(StepVerifier::create)
                 .assertNext(status -> assertThat(status).isEqualTo(OK))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldNotConfirmEmailWhenCorrectConfirmationCodeIsUsed() {
+        final EmailConfirmationManager testable = new EmailConfirmationManager(
+                code -> Mono.just(Boolean.FALSE)
+        );
+
+        testable.confirmEmail("000000")
+                .as(StepVerifier::create)
+                .assertNext(status -> assertThat(status).isEqualTo(DENIED))
                 .verifyComplete();
     }
 }
