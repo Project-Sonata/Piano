@@ -33,7 +33,7 @@ public final class ConfirmationCodeEmailConfirmationStrategy implements EmailCon
 
     @Override
     @NotNull
-    public Mono<Boolean> confirmCode(@NotNull final String code) {
+    public Mono<Boolean> checkConfirmationCode(@NotNull final String code) {
         return confirmationCodeService.loadConfirmationCodeByValue(code)
                 .map(confirmationCode -> true)
                 .defaultIfEmpty(false)

@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 public interface EmailConfirmationCodeChecker {
 
     @NotNull
-    Mono<Boolean> confirmCode(@NotNull String code);
+    Mono<Boolean> checkConfirmationCode(@NotNull String code);
 }

@@ -13,7 +13,7 @@ public final class EmailConfirmationManager {
 
     @NotNull
     public Mono<ConfirmationStatus> confirmEmail(@NotNull final String code) {
-        return emailConfirmationCodeChecker.confirmCode(code)
+        return emailConfirmationCodeChecker.checkConfirmationCode(code)
                 .map(ConfirmationStatus::fromBoolean);
     }
 }

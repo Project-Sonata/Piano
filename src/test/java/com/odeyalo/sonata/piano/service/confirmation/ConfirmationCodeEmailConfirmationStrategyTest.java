@@ -1,6 +1,5 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
-import com.odeyalo.sonata.piano.config.support.ConfirmationCodeFactories;
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.mail.EmailMessage;
@@ -109,7 +108,7 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
         testable.sendConfirmationFor(EMAIL_TO_CONFIRM, USER).block();
 
         // when
-        testable.confirmCode("444")
+        testable.checkConfirmationCode("444")
                 .as(StepVerifier::create)
                 // then
                 .expectNext(Boolean.TRUE)
@@ -123,7 +122,7 @@ class ConfirmationCodeEmailConfirmationStrategyTest {
                 .build();
 
         // when
-        testable.confirmCode("012")
+        testable.checkConfirmationCode("012")
                 .as(StepVerifier::create)
                 // then
                 .expectNext(Boolean.FALSE)
