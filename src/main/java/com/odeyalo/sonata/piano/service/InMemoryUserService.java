@@ -40,10 +40,14 @@ public final class InMemoryUserService implements UserService {
             return user;
         });
 
-        return findByEmail(user.email())
-                .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
-                .switchIfEmpty(Mono.defer(() -> saveUser))
-                .cast(User.class);
+        ;
+
+        return findById(user.id())
+                .flatMap(u -> saveUser)
+                .switchIfEmpty(findByEmail(user.email())
+                        .flatMap(u -> Mono.error(new EmailAddressAlreadyInUseException()))
+                        .switchIfEmpty(Mono.defer(() -> saveUser))
+                        .cast(User.class));
     }
 
     @Override
