@@ -1,19 +1,20 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
+import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.ConfirmationStatus;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
+@AllArgsConstructor
 public final class EmailConfirmationManager {
-    private final EmailConfirmationCodeChecker emailConfirmationCodeChecker;
-
-    public EmailConfirmationManager(final EmailConfirmationCodeChecker emailConfirmationCodeChecker) {
-        this.emailConfirmationCodeChecker = emailConfirmationCodeChecker;
-    }
+    private final ConfirmationCodeLoader confirmationCodeLoader;
 
     @NotNull
-    public Mono<ConfirmationStatus> confirmEmail(@NotNull final String code) {
-        return emailConfirmationCodeChecker.checkConfirmationCode(code)
-                .map(ConfirmationStatus::fromBoolean);
+    public Mono<ConfirmationStatus> confirmEmail(@NotNull final String codeValue) {
+        return confirmationCodeLoader.loadConfirmationCodeByValue(codeValue)
+                .map(code -> ConfirmationStatus.OK)
+                .defaultIfEmpty(ConfirmationStatus.DENIED)
+                .onErrorReturn(InvalidConfirmationCodeException.class, ConfirmationStatus.DENIED);
     }
 }
