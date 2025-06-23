@@ -29,8 +29,9 @@ public final class EmailConfirmationManager {
     }
 
     @NotNull
-    private Mono<User> confirmUserRegistration(final ConfirmationCode code) {
-        final User activatedUser = code.generatedFor().withActivated(true);
+    private Mono<User> confirmUserRegistration(@NotNull final ConfirmationCode code) {
+        final User activatedUser = code.generatedFor()
+                .activate();
         return userService.save(activatedUser);
     }
 }

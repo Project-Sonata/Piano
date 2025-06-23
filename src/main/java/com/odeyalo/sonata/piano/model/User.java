@@ -40,4 +40,11 @@ public class User {
     public ContextUri contextUri() {
         return id.toContextUri();
     }
+
+    @NotNull
+    public User activate() {
+        return withActivated(true);
+    }
+
+
 }
