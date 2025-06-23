@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import testing.UserFaker;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.odeyalo.sonata.piano.model.ConfirmationStatus.DENIED;
@@ -69,7 +70,8 @@ class EmailConfirmationManagerTest {
         @Test
         void shouldNotConfirmEmailWhenIncorrectConfirmationCodeIsUsed() {
             final EmailConfirmationManager testable = new EmailConfirmationManager(
-                    code -> Mono.empty()
+                    code -> Mono.empty(),
+                    new InMemoryUserService(Collections.emptyList())
             );
 
             testable.confirmEmail("000000")
@@ -81,7 +83,9 @@ class EmailConfirmationManagerTest {
         @Test
         void shouldNotConfirmEmailWhenExpiredConfirmationCodeIsUsed() {
             final EmailConfirmationManager testable = new EmailConfirmationManager(
-                    code -> Mono.error(new InvalidConfirmationCodeException("Invalid confirmation code"))
+                    code -> Mono.error(new InvalidConfirmationCodeException("Invalid confirmation code")),
+                    new InMemoryUserService(Collections.emptyList())
+
             );
 
             testable.confirmEmail("000000")
