@@ -6,6 +6,11 @@ import org.springframework.http.ResponseEntity;
 public final class HttpStatuses {
 
     @NotNull
+    public static ResponseEntity<?> ok() {
+        return ResponseEntity.ok().build();
+    }
+
+    @NotNull
     public static <T> ResponseEntity<T> ok(@NotNull T body) {
         return ResponseEntity.ok(body);
     }

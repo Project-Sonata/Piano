@@ -10,4 +10,8 @@ public enum ConfirmationStatus {
     public static ConfirmationStatus fromBoolean(boolean from) {
         return from ? OK : DENIED;
     }
+
+    public boolean isConfirmed() {
+        return this == OK;
+    }
 }

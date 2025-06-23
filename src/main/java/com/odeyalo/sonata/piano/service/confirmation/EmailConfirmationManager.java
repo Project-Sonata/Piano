@@ -6,11 +6,13 @@ import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.UserService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static com.odeyalo.sonata.piano.model.ConfirmationStatus.DENIED;
 import static com.odeyalo.sonata.piano.model.ConfirmationStatus.OK;
 
+@Service
 @AllArgsConstructor
 public final class EmailConfirmationManager {
     private final ConfirmationCodeLoader confirmationCodeLoader;

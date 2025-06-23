@@ -2,6 +2,7 @@ package com.odeyalo.sonata.piano.api;
 
 import com.odeyalo.sonata.piano.api.dto.EmailConfirmationCodeDto;
 import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
+import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationManager;
 import com.odeyalo.sonata.piano.service.registration.email.EmailPasswordRegistrationManager;
 import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import com.odeyalo.sonata.piano.support.web.HttpStatuses;
@@ -17,9 +18,12 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/v1/signup")
 public final class UserRegistrationController {
     private final EmailPasswordRegistrationManager registrationManager;
+    private final EmailConfirmationManager confirmationManager;
 
-    public UserRegistrationController(final EmailPasswordRegistrationManager registrationManager) {
+    public UserRegistrationController(final EmailPasswordRegistrationManager registrationManager,
+                                      final EmailConfirmationManager confirmationManager) {
         this.registrationManager = registrationManager;
+        this.confirmationManager = confirmationManager;
     }
 
     @PostMapping("/email")
@@ -32,11 +36,12 @@ public final class UserRegistrationController {
 
     @PostMapping("/email/confirm")
     public Mono<ResponseEntity<?>> confirmUserEmail(@RequestBody EmailConfirmationCodeDto body) {
-        if (body.code().equals("666666")) {
-            return Mono.just(
-                    HttpStatuses.badRequest()
-            );
-        }
-        return Mono.empty();
+        return confirmationManager.confirmEmail(body.code())
+                .map(decision -> {
+                    if ( decision.isConfirmed() ) {
+                        return HttpStatuses.ok();
+                    }
+                    return HttpStatuses.badRequest();
+                });
     }
 }
