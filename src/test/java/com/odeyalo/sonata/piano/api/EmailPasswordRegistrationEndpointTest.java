@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.api;
 
+import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
 import com.odeyalo.sonata.piano.api.exchange.dto.ExceptionMessageDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationResponseDto;
 import org.jetbrains.annotations.NotNull;

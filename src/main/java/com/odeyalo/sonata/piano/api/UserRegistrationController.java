@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+
+
 @RestController
 @RequestMapping("/v1/signup")
 public final class UserRegistrationController {
@@ -26,7 +29,7 @@ public final class UserRegistrationController {
         this.confirmationManager = confirmationManager;
     }
 
-    @PostMapping("/email")
+    @PostMapping(value = "/email", consumes = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<?>> emailRegistrationStrategy(@NotNull final RegistrationForm registrationForm) {
         return registrationManager.registerUser(registrationForm)
                 .map(it -> new EmailConfirmationRequiredResponseDto())
@@ -34,7 +37,7 @@ public final class UserRegistrationController {
     }
 
 
-    @PostMapping("/email/confirm")
+    @PostMapping(value = "/email/confirm", consumes = APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<?>> confirmUserEmail(@RequestBody EmailConfirmationCodeDto body) {
         return confirmationManager.confirmEmail(body.code())
                 .map(decision -> {
