@@ -2,6 +2,8 @@ package com.odeyalo.sonata.piano.service.registration.support;
 
 import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
@@ -12,6 +14,7 @@ import java.util.List;
 @Component
 public final class ChainRegistrationFormValidator implements RegistrationFormValidator {
     private final List<RegistrationFormValidationStep> validationSteps;
+    private final Logger logger = LoggerFactory.getLogger(ChainRegistrationFormValidator.class);
 
     public ChainRegistrationFormValidator(final List<RegistrationFormValidationStep> validationSteps) {
         Assert.notEmpty(validationSteps, "validationSteps must contain at least one validation!");
@@ -23,6 +26,9 @@ public final class ChainRegistrationFormValidator implements RegistrationFormVal
     public Mono<Void> validate(@NotNull final RegistrationForm form) {
         return Flux.fromIterable(validationSteps)
                 .flatMap(step -> step.validate(form))
-                .then();
+                .then()
+                .doOnSuccess((unused) -> logger.info("All validation steps are completed successfully: {}", form))
+                .doOnError(err -> logger.info("Validation failed for form: {}", form));
+
     }
 }

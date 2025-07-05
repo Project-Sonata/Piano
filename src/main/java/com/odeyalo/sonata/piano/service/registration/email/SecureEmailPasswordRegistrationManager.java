@@ -7,6 +7,8 @@ import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationStrategy;
 import com.odeyalo.sonata.piano.service.registration.support.RegistrationFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -20,13 +22,16 @@ public final class SecureEmailPasswordRegistrationManager implements EmailPasswo
     private final UserService userService;
     private final RegistrationFormValidator registrationFormValidator;
     private final EmailConfirmationStrategy emailConfirmationStrategy;
+    private final Logger logger = LoggerFactory.getLogger(SecureEmailPasswordRegistrationManager.class);
 
     @Override
     @NotNull
     public Mono<RegistrationResult> registerUser(@NotNull final RegistrationForm form) {
-
+        logger.info("Starting user registration {}", form);
         return registrationFormValidator.validate(form)
-                .then(Mono.defer(() -> tryRegisterUser(form)));
+                .then(Mono.defer(() -> tryRegisterUser(form)))
+                .doOnSuccess(result -> logger.info("A user [{}] has been registered and email confirmation has been sent. " +
+                        "User activation status marked as [{}]", result.registeredUser().id(), result.registeredUser().isActivated()));
     }
 
     @NotNull
