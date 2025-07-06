@@ -31,6 +31,11 @@ public final class UserFaker {
         return this;
     }
 
+    public UserFaker withActivated(final boolean activated) {
+        builder.activated(activated);
+        return this;
+    }
+
     @NotNull
     public User get() {
         return builder.build();

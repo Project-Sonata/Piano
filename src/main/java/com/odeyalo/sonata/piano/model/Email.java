@@ -29,4 +29,10 @@ public record Email(@NotNull String value) {
     public String asString() {
         return value;
     }
+
+    @NotNull
+    public String masked() {
+        // intentionally left unmasked, will change it soon
+        return value;
+    }
 }

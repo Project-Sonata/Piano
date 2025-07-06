@@ -4,11 +4,13 @@ import com.odeyalo.sonata.common.context.ContextUri;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
+import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
 @Value
 @Builder
 @AllArgsConstructor
+@With
 public class User {
     @NotNull
     UserId id;
@@ -38,4 +40,11 @@ public class User {
     public ContextUri contextUri() {
         return id.toContextUri();
     }
+
+    @NotNull
+    public User activate() {
+        return withActivated(true);
+    }
+
+
 }
