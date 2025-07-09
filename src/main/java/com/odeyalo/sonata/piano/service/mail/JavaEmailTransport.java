@@ -28,7 +28,12 @@ public final class JavaEmailTransport implements EmailTransport {
                 message.setFrom("greetings@sonata.com");
                 message.setTo(payload.to().asString());
                 message.setSubject(payload.subject());
-                message.setText(payload.body());
+
+                if ( payload.html() ) {
+                    mimeMessage.setContent(payload.body(), "text/html; charset=utf-8");
+                } else {
+                    mimeMessage.setContent(payload.body(), "text/plain; charset=utf-8");
+                }
 
                 Transport.send(mimeMessage, mimeMessage.getAllRecipients());
             } catch (final MessagingException e) {

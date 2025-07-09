@@ -31,7 +31,7 @@ public final class ConfirmationCodeEmailConfirmationStrategy implements EmailCon
                                           @NotNull final User user) {
         logger.info("Starting the email confirmation for {}", emailToConfirm.masked());
         return confirmationCodeService.newConfirmationCodeFor(user)
-                .map(confirmationCode -> confirmationMessageTemplateFactory.createEmailMessage(emailToConfirm, confirmationCode))
+                .flatMap(confirmationCode -> confirmationMessageTemplateFactory.createEmailMessageAsync(emailToConfirm, confirmationCode))
                 .flatMap(emailTransport::sendEmail)
                 .doOnSuccess(unused -> logger.info("A confirmation code has been successfully sent to {}", emailToConfirm.masked()));
     }
