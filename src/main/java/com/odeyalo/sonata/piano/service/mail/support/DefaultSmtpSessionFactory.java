@@ -19,7 +19,7 @@ public final class DefaultSmtpSessionFactory implements SmtpSessionFactory {
         GMAIL_PROPERTIES.put("mail.transport.protocol", "smtp");
         GMAIL_PROPERTIES.put("mail.smtp.auth", "true");
         GMAIL_PROPERTIES.put("mail.smtp.starttls.enable", "true");
-        GMAIL_PROPERTIES.put("mail.debug", "true");
+        GMAIL_PROPERTIES.put("mail.debug", "false");
     }
 
     private DefaultSmtpSessionFactory(@NotNull final Properties props,

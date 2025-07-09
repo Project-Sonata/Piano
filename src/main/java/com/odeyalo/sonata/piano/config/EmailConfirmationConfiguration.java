@@ -18,5 +18,4 @@ public class EmailConfirmationConfiguration {
         logger.info("Using in-memory confirmation code loader... Safe for dev purposes, but should be avoided in prod");
         return new InMemoryConfirmationCodeService(confirmationCodeFactory);
     }
-
 }
