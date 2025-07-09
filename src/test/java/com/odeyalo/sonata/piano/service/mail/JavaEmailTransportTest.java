@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service.mail;
 
 import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.service.mail.support.LocalSmtpSessionFactory;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -23,7 +24,9 @@ class JavaEmailTransportTest {
     @Test
     void shouldSendEmailToSmtpServer() throws MessagingException, IOException {
         // given
-        final JavaEmailTransport testable = new JavaEmailTransport();
+        final JavaEmailTransport testable = new JavaEmailTransport(
+                new LocalSmtpSessionFactory()
+        );
 
         // when
         testable.sendEmail(

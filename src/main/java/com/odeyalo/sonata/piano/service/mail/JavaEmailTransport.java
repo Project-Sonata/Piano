@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.service.mail;
 
+import com.odeyalo.sonata.piano.service.mail.support.SmtpSessionFactory;
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
 import org.jetbrains.annotations.NotNull;
@@ -9,16 +10,16 @@ import reactor.core.publisher.Mono;
 import java.util.Properties;
 
 public final class JavaEmailTransport implements EmailTransport {
+    private final SmtpSessionFactory smtpSessionFactory;
+
+    public JavaEmailTransport(final SmtpSessionFactory smtpSessionFactory) {
+        this.smtpSessionFactory = smtpSessionFactory;
+    }
 
     @Override
     @NotNull
     public Mono<Void> sendEmail(@NotNull final EmailMessage payload) {
-        return Mono.fromRunnable(() -> {
-
-            Properties props = new Properties();
-            props.put("mail.smtp.host", "localhost");
-            props.put("mail.smtp.port", "25");
-            Session session = Session.getInstance(props, null);
+        return smtpSessionFactory.getSession().handle((session, sink) -> {
 
             MimeMessage mimeMessage = new MimeMessage(session);
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
@@ -31,7 +32,7 @@ public final class JavaEmailTransport implements EmailTransport {
 
                 Transport.send(mimeMessage, mimeMessage.getAllRecipients());
             } catch (final MessagingException e) {
-                throw new RuntimeException(e);
+                sink.error(new RuntimeException(e));
             }
         });
     }
