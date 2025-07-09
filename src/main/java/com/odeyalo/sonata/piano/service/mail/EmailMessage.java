@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service.mail;
 
 import com.odeyalo.sonata.piano.model.Email;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Value
 @Builder
+@AllArgsConstructor(staticName = "of")
 public class EmailMessage {
     @NotNull
     Email to;
