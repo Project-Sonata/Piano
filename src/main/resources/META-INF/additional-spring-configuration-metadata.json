@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "sonata.mail.username",
+      "type": "java.lang.String",
+      "description": "A username to connect to remote SMTP server."
+    },
+    {
+      "name": "sonata.mail.password",
+      "type": "java.lang.String",
+      "description": "A password to connect to remote SMTP server."
+    }
+  ] }
