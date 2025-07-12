@@ -19,6 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import testing.api.client.PianoClient;
 import testing.api.client.config.AutoConfigurePianoClient;
+import testing.base.AbstractIntegrationTest;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +32,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @AutoConfigureWebTestClient
 @AutoConfigurePianoClient
 @ActiveProfiles("test")
-class EmailConfirmationEndpointTest {
+class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
 
     @Autowired
     WebTestClient webTestClient;

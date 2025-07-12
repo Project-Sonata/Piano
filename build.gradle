@@ -36,6 +36,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.odeyalo.sonata:suite:1.0.0'
     implementation 'org.thymeleaf:thymeleaf-spring6'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.postgresql:postgresql'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:r2dbc-postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -50,8 +52,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'name.bychkov:junit5-fakesmtp:1.0.1:jakarta'
-
-
+    testImplementation 'org.testcontainers:postgresql'
 }
 
 tasks.named('test') {
