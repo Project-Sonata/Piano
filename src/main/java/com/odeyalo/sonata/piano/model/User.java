@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Value
 @Builder
 @AllArgsConstructor
 @With
 public class User {
+    @Nullable
+    Long internalId;
     @NotNull
     UserId id;
     @NotNull
@@ -45,6 +48,4 @@ public class User {
     public User activate() {
         return withActivated(true);
     }
-
-
 }

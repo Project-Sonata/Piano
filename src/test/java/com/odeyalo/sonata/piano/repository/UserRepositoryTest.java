@@ -2,7 +2,9 @@ package com.odeyalo.sonata.piano.repository;
 
 
 import com.odeyalo.sonata.piano.entity.UserEntity;
+import com.odeyalo.sonata.piano.model.User;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +24,17 @@ class UserRepositoryTest extends AbstractIntegrationTest {
 
     @Autowired
     UserRepository testable;
-    private final Logger logger = LoggerFactory.getLogger(UserRepositoryTest.class);
+
+    @AfterEach
+    void tearDown() {
+        testable.deleteAll().block();
+    }
 
     @Test
     void shouldFindAllSavedUsers() {
         // given
         final UserEntity user1 = UserEntityFaker.newUser().get();
         final UserEntity user2 = UserEntityFaker.newUser().get();
-
-        logger.info("About to save 2 users: {}, {}", user1, user2);
 
         final List<UserEntity> savedUsers = insertUsers(user1, user2);
 
@@ -39,6 +43,21 @@ class UserRepositoryTest extends AbstractIntegrationTest {
 
         // then
         assertThat(foundUsers).containsAll(savedUsers);
+    }
+
+    @Test
+    void shouldFindByExternalId() {
+        final UserEntity user1 = UserEntityFaker.newUser()
+                .withExternalId("helloworld").get();
+        final UserEntity user2 = UserEntityFaker.newUser().get();
+
+        insertUsers(user1, user2);
+
+        final UserEntity foundUser = testable.findByExternalId("helloworld").block();
+
+        assertThat(foundUser)
+                .usingRecursiveComparison().ignoringFields("id")
+                .isEqualTo(user1);
     }
 
     @NotNull

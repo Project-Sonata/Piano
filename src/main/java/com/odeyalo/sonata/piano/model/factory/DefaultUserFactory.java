@@ -18,6 +18,7 @@ public final class DefaultUserFactory implements UserFactory {
     public User createUser(@NotNull final RegistrationForm form) {
 
         return new User(
+                null,
                 UserId.random(),
                 form.email(),
                 passwordEncoder.encode(form.password()),
@@ -33,6 +34,7 @@ public final class DefaultUserFactory implements UserFactory {
     public User createUnactivatedUser(@NotNull final RegistrationForm form) {
 
         return new User(
+                null,
                 UserId.random(),
                 form.email(),
                 passwordEncoder.encode(form.password()),
