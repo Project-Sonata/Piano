@@ -11,8 +11,10 @@ jobs:
   sonarqube:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: SonarQube Scan
-        run: gradlew test jacocoTestReport sonar
+        run: ./gradlew test jacocoTestReport sonar
             -Dsonar.projectKey=sonata-piano
             -Dsonar.scm.provider=git
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
