@@ -24,7 +24,8 @@ jobs:
         uses: tj-actions/changed-files@v46
         with:
           path: 'changelog'
-
+      - name: Prepare environment
+        run: pip install pyyaml
       - name: Validate new changelog file
         env:
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
