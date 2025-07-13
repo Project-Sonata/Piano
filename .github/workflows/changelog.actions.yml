@@ -45,7 +45,29 @@ jobs:
       steps:
         - uses: mshick/add-pr-comment@v2
           with:
-            message: |
-              **Changelog validation failed!**
-                🌏
-                !
+            message: | 
+              $(cat <<EOF
+              ## 🛑 Changelog Validation Failed
+
+              Your pull request is missing a valid changelog entry.
+
+              ### 📋 What’s Required?
+
+              All pull requests **must create** the `.yaml` file with a description of the change. This helps us:
+
+                - Track new features and bug fixes
+                - Generate release notes
+                - Keep users informed
+
+              ---
+
+              ### 🧾 Expected format (example)
+
+              ```yaml
+              sonata:
+                piano:
+                  enhancement:
+                    - "Sonata-1: Add changelog to project"
+
+              EOF
+              )
