@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
 public final class InMemoryUserService implements UserService {
     private final Map<UserId, User> users;
     private final Logger logger = LoggerFactory.getLogger(InMemoryUserService.class);
@@ -27,7 +26,6 @@ public final class InMemoryUserService implements UserService {
         this.users = users;
     }
 
-    @Autowired
     public InMemoryUserService(final List<User> users) {
         this.users = users.stream()
                 .collect(Collectors.toMap(User::id, Function.identity()));

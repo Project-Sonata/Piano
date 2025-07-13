@@ -11,4 +11,7 @@ services:
       GITHUB_USERNAME: ${GH_USERNAME}
       GITHUB_ACCESS_TOKEN: ${GH_ACCESS_TOKEN}
 
+    volumes:
+      - $PWD:$PWD
+      - /var/run/docker.sock:/var/run/docker.sock
     container_name: sonata-piano-tests

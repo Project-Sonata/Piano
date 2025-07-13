@@ -1,7 +1,7 @@
 package com.odeyalo.sonata.piano.api;
 
-import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
 import com.odeyalo.sonata.piano.api.exchange.dto.ExceptionMessageDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationResponseDto;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
+import testing.base.AbstractIntegrationTest;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @SpringBootTest
 @AutoConfigureWebTestClient
 @ActiveProfiles("test")
-class EmailPasswordRegistrationEndpointTest {
+class EmailPasswordRegistrationEndpointTest extends AbstractIntegrationTest {
 
     @Autowired
     WebTestClient webTestClient;

@@ -44,4 +44,10 @@ public final class ConfirmationCodeEmailConfirmationStrategy implements EmailCon
                 .defaultIfEmpty(false)
                 .onErrorReturn(InvalidConfirmationCodeException.class, false);
     }
+    /**
+     * TODO: add flyway migrations
+     * TODO: add Test containers
+     * TODO: save User and Confirmation code to Database
+     *
+     */
 }

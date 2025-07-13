@@ -7,4 +7,4 @@ WORKDIR /sonata/playlists
 # For jdwp only
 ENV JAVA_DEBUG_PORT=*:5005
 
-CMD ["gradle", "test"]
+CMD ["gradle", "test", "-i"]
