@@ -23,8 +23,8 @@ def check_files_not_modified(cli_args):
     pass
 
 if __name__ == '__main__':
-    print(f"Modified files: {os.environ['ALL_CHANGED_AND_MODIFIED_FILES']}")
-    print(f"Added files: {os.environ['ALL_ADDED_FILES']}")
+    print(f"Modified files: {os.environ.get('ALL_CHANGED_AND_MODIFIED_FILES')}")
+    print(f"Added files: {os.environ.get('ALL_ADDED_FILES')}")
     args = sys.argv[1:]
     print(f"Running a changelog validation with arguments {args}")
 
