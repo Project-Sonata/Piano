@@ -6,13 +6,11 @@ on:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
-env:
-  GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
-  GITHUB_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
 jobs:
   sonarqube:
     runs-on: ubuntu-latest
+    needs: [ tests ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,7 +18,8 @@ jobs:
         run: chmod +x ./gradlew
       - name: SonarQube Scan
         run: |  
-          ./gradlew test jacocoTestReport sonar -Dsonar.projectKey=sonata-piano \
+          ./gradlew jacocoTestReport sonar -Dsonar.projectKey=sonata-piano \
+            -Dsonar.coverage.jacoco.xmlReportPaths=jacocoReport.xml \
             -Dsonar.scm.provider=git \
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }} \
             -Dsonar.pullrequest.key=${{ github.event.number }} \
