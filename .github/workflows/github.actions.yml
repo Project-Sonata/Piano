@@ -29,12 +29,12 @@ jobs:
       - name: Validate new changelog file
         env:
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
-        run: python ci/changelog.py -a ${ALL_ADDED_FILES}
+        run: "python ci/changelog.py -a ${ALL_ADDED_FILES}"
 
       - name: Changelog files should not be changed
         env:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-        run: python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}
+        run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
 
   test:
     runs-on: ubuntu-latest
