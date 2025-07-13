@@ -46,7 +46,6 @@ jobs:
         - uses: mshick/add-pr-comment@v2
           with:
             message: | 
-              $(cat <<EOF
               ## 🛑 Changelog Validation Failed
 
               Your pull request is missing a valid changelog entry.
@@ -68,6 +67,3 @@ jobs:
                 piano:
                   enhancement:
                     - "Sonata-1: Add changelog to project"
-
-              EOF
-              )
