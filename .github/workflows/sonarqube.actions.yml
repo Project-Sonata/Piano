@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, reopened]
 env:
   GH_USERNAME: ${{ secrets.GH_USERNAME }}
-  GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  GITHUB_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
 jobs:
   sonarqube:
