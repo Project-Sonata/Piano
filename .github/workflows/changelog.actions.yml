@@ -41,7 +41,7 @@ jobs:
     permissions:
       pull-requests: write
     needs: [ changelog ]
-    if: ${{failure() && needs.changelog.result == 'failure'}}
+    if: ${{success() && needs.changelog.result == 'success'}}
     steps:
       - uses: mshick/add-pr-comment@v2
         with:
@@ -79,4 +79,3 @@ jobs:
                 piano:
                   enhancement:
                     - "Sonata-1: Add changelog to project"
-              |
