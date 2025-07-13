@@ -12,11 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v5.2.0
+        run: ./gradlew test jacocoTestReport sonar
         with:
           args:
             -Dsonar.projectKey=sonata-piano
+            -Dsonar.scm.provider=git
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
+            -Dsonar.pullrequest.key=${{ github.event.number }} \
+            -Dsonar.pullrequest.branch=${{ github.ref_name }} \
+            -Dsonar.pullrequest.base=master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
