@@ -15,6 +15,7 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v5.2.0
         with:
           args:
+            -Dsonar.projectKey=sonata-piano
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
