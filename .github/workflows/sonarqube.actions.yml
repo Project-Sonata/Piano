@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v4.1.0
+        uses: sonarsource/sonarqube-scan-action@v5.2.0
         with:
           args:
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
