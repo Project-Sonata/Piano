@@ -36,7 +36,18 @@ jobs:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
         run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
-  notify:
+  notify-on-success:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    needs: [ changelog ]
+    if: ${{failure() && needs.changelog.result == 'failure'}}
+    steps:
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message: Changelog validation successful!
+          message-id: changelog-${{github.event.pull_request}}
+  notify-on-failure:
       runs-on: ubuntu-latest
       permissions:
         pull-requests: write
@@ -45,6 +56,7 @@ jobs:
       steps:
         - uses: mshick/add-pr-comment@v2
           with:
+            message-id: changelog-${{github.event.pull_request}}
             message: | 
               ## 🛑 Changelog Validation Failed
 
@@ -67,3 +79,4 @@ jobs:
                 piano:
                   enhancement:
                     - "Sonata-1: Add changelog to project"
+              |
