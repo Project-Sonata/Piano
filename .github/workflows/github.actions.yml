@@ -28,7 +28,7 @@ jobs:
       - name: Validate changelog
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: python ../ci/changelog.py ${ALL_CHANGED_FILES}
+        run: python ci/changelog.py ${ALL_CHANGED_FILES}
 
   test:
     runs-on: ubuntu-latest
