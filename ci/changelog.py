@@ -1,16 +1,58 @@
-import os
 import sys
 
+import yaml
+
 def changelog(cli_args):
-    print("Hello!")
     if len(args) == 0:
         print("Changelog file was not created!")
         sys.exit(1)
 
-    added_files = cli_args[0]
-    print("These yaml files were added: ")
+    added_files = cli_args[0].split("\n")
 
-    print(added_files)
+    if len(added_files) != 1:
+        print("Multiple changelog files were created!")
+
+    with open(f"changelog/{added_files[0]}") as stream:
+        try:
+            changelog_file_content = yaml.safe_load(stream)
+            if changelog_file_content is None:
+                print("Changelog cannot be empty!")
+                sys.exit(1)
+
+            if changelog_file_content['sonata'] is None:
+                print("Changelog should start with 'sonata'")
+                sys.exit(1)
+
+            if changelog_file_content['sonata']['piano'] is None:
+                print("Changelog should start with 'sonata.piano'")
+                sys.exit(1)
+
+            if changelog_file_content['sonata']['piano']['enhancement'] is None:
+                print("Changelog should start with 'sonata.piano.enhancement'")
+                sys.exit(1)
+
+            messages = changelog_file_content['sonata']['piano']['enhancement']
+
+            for message in messages:
+                message_parts = message.split(":")
+                if len(message_parts) == 1:
+                    print("Message of the changelog should contain ticket name and description of the change!")
+                    sys.exit(1)
+
+                ticket_number, ticket_desc = message_parts[0], message_parts[1]
+
+                if ticket_number.strip() == '':
+                    print("Ticket number is whitespaces only")
+                    sys.exit(1)
+                if ticket_desc.strip() == '':
+                    print("Ticket description is whitespaces only")
+                    sys.exit(1)
+
+            print("Changelog is valid!")
+        except yaml.YAMLError as exc:
+            print(exc)
+            sys.exit(1)
+
 
 def check_files_not_modified(cli_args):
     if len(cli_args) == 0:
@@ -20,11 +62,12 @@ def check_files_not_modified(cli_args):
     all_modified_files, all_added_files = cli_args[0], cli_args[1]
 
     print("Checking modified files...")
-    pass
+
+    if all_modified_files != all_added_files:
+        print("Files were modified")
+        sys.exit(1)
 
 if __name__ == '__main__':
-    print(f"Modified files: {os.environ.get('ALL_CHANGED_AND_MODIFIED_FILES')}")
-    print(f"Added files: {os.environ.get('ALL_ADDED_FILES')}")
     args = sys.argv[1:]
     print(f"Running a changelog validation with arguments {args}")
 
