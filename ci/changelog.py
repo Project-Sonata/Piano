@@ -10,7 +10,8 @@ def check_files_not_modified(all_changed_files, added_files):
     pass
 
 if __name__ == '__main__':
-
+    print("These arguments were supplied: ")
+    print(sys.argv)
     args = sys.argv[1:]
     if args[0] == '-m':
         check_files_not_modified(args[1], args[2])
