@@ -38,6 +38,8 @@ jobs:
         run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
   notify:
       runs-on: ubuntu-latest
+      permissions:
+        pull-requests: write
       needs: [changelog]
       if: ${{failure() && needs.changelog.result == 'failure'}}
       steps:
