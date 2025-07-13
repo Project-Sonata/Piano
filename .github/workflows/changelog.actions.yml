@@ -39,7 +39,7 @@ jobs:
   notify:
       runs-on: ubuntu-latest
       needs: [changelog]
-      if: ${{needs.changelog.result == 'failure'}}
+      if: ${{failure() && needs.changelog.result == 'failure'}}
       steps:
         - uses: mshick/add-pr-comment@v2
           with:
