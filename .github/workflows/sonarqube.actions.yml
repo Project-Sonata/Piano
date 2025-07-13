@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       - name: SonarQube Scan
         run: ./gradlew test jacocoTestReport sonar
             -Dsonar.projectKey=sonata-piano
