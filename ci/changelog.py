@@ -6,14 +6,18 @@ def changelog(cli_args):
         print("Changelog file was not created!")
         sys.exit(1)
 
-    added_files = args[0]
+    added_files = cli_args[0]
     print("These yaml files were added: ")
 
     print(added_files)
 
 def check_files_not_modified(cli_args):
+    if len(cli_args) == 0:
+        print("No files were added/modified")
+        return
 
-    all_changed_files, added_files = cli_args[0], cli_args[1]
+    all_modified_files, all_added_files = cli_args[0], cli_args[1]
+
     print("Checking modified files...")
     pass
 
