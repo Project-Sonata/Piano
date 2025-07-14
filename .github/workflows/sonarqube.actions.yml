@@ -6,6 +6,8 @@ on:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: [""]
 
 jobs:
   sonarqube:
@@ -16,6 +18,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+      - name: Download JaCoCo report
+        uses: actions/download-artifact@v4
+        with:
+          name: "jacocoTestReport.xml"
       - name: SonarQube Scan
         run: |  
           ./gradlew jacocoTestReport sonar -Dsonar.projectKey=sonata-piano \
