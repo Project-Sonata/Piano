@@ -14,5 +14,5 @@ services:
     volumes:
       - $PWD:$PWD
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./reports:/sonata/piano/build/reports/jacoco/test/jacocoTestReport.xml
+      - ./reports:/sonata/piano/build/reports/jacoco/test/
     container_name: sonata-piano-tests
