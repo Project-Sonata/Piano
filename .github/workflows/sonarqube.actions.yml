@@ -1,11 +1,6 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    types: [ opened, synchronize, reopened ]
   workflow_run:
     workflows:
       - tests
