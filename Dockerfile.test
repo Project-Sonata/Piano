@@ -1,10 +1,10 @@
 FROM gradle:8.8.0-jdk17 AS build
 
-COPY . /sonata/playlists
+COPY . /sonata/piano
 
-WORKDIR /sonata/playlists
+WORKDIR /sonata/piano
 
 # For jdwp only
 ENV JAVA_DEBUG_PORT=*:5005
 
-CMD ["gradle", "test", "-i"]
+CMD ["gradle", "test", "jacocoTestReport"]
