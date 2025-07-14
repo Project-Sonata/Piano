@@ -39,7 +39,7 @@ jobs:
           name: "jacocoTestReport.xml"
       - name: SonarQube Scan
         run: |
-          ./gradlew jacocoTestReport sonar -Dsonar.projectKey=sonata-piano \
+          ./gradlew sonar -Dsonar.projectKey=sonata-piano \
             -Dsonar.coverage.jacoco.xmlReportPaths=jacocoReport.xml \
             -Dsonar.scm.provider=git \
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }} \
