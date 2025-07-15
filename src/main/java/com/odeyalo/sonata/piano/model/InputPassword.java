@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public record InputPassword(@NotNull CharSequence value) implements CharSequence {
 
-    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*\\d)(?=.*[a-zA-Z]).{8,}$");
 
     public InputPassword {
 
