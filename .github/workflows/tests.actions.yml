@@ -59,6 +59,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - name: Generate Sonarqube report
+        id: 'quality-gate-check'
         uses: phwt/sonarqube-quality-gate-action@v1
         with:
           sonar-project-key: sonata-piano
