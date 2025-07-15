@@ -64,5 +64,9 @@ jobs:
           sonar-project-key: sonata-piano
           sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
           sonar-token: ${{ secrets.SONAR_TOKEN }}
-          branch: ${{ github.ref_name }}
           pull-request: ${{ github.event.number }}
+          disable-pr-comment: 'true'
+      - name: Output result
+        run: |
+          echo "${{ steps.quality-gate-check.outputs.project-status }}"
+          echo "${{ steps.quality-gate-check.outputs.quality-gate-result }}"
