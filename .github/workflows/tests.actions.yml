@@ -41,6 +41,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "build-out"
+      - name: Content
+        run: ls
+      - name: Prepare artifact for scanning
+        run: unzip build.zip
       - name: SonarQube Scan
         run: |
           ./gradlew sonar -Dsonar.projectKey=sonata-piano \

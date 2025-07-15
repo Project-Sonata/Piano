@@ -1,4 +1,4 @@
-name: sonata-piano
+name: changelog
 
 on:
   pull_request:
