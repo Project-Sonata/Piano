@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
 
 public record InputPassword(@NotNull CharSequence value) implements CharSequence {
 
-    private static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
 
     public InputPassword {
 
-        if ( !Pattern.compile(PASSWORD_REGEX).matcher(value).matches() ) {
+        if ( !PASSWORD_REGEX.matcher(value).matches() ) {
             throw new PasswordRegexException("Password does not match regex, password must have 8 characters with at least one number");
         }
     }
