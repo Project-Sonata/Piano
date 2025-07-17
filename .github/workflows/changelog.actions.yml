@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Get current UTC time
         id: datetime
-        run: echo "now=$(date -u '+%m/%d/%Y, %H:%M:%S (UTC+0)')" >> "$GITHUB_OUTPUT"
+        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get changed files
