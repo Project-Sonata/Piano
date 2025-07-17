@@ -49,7 +49,7 @@ jobs:
           message: |
             Changelog validation successful!
             
-            updated: ${{ steps.datetime.outputs.now }}
+            ###### _updated: ${{ steps.datetime.outputs.now }}_
 
           message-id: changelog-${{github.event.pull_request}}
   notify-on-failure:
@@ -89,4 +89,4 @@ jobs:
                     - "Sonata-1: Add changelog to project"
               ```
               
-              updated: ${{ steps.datetime.outputs.now }}
+              ###### _updated: ${{ steps.datetime.outputs.now }}_
