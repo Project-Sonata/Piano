@@ -45,7 +45,11 @@ jobs:
     steps:
       - uses: mshick/add-pr-comment@v2
         with:
-          message: Changelog validation successful!
+          message: |
+            Changelog validation successful!
+            
+            updated: ${{ steps.datetime.outputs.now }}
+
           message-id: changelog-${{github.event.pull_request}}
   notify-on-failure:
       runs-on: ubuntu-latest
