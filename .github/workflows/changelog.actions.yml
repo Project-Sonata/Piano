@@ -78,6 +78,7 @@ jobs:
               sonata:
                 piano:
                   enhancement:
-                    - "Sonata-1: Add changelog to project"```
+                    - "Sonata-1: Add changelog to project"
+              ```
               
               updated: ${{ steps.datetime.outputs.now }}
