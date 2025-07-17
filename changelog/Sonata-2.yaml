@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "Sonata-2: Add sonarqube analysis"
