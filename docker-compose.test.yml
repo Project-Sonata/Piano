@@ -14,5 +14,4 @@ services:
     volumes:
       - $PWD:$PWD
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./build:/sonata/piano/build/
     container_name: sonata-piano-tests
