@@ -1,0 +1,24 @@
+name: tests-and-sonar
+
+on:
+  pull_request:
+    branches:
+      - master
+
+env:
+  GH_USERNAME: ${{ secrets.GH_USERNAME }}
+  GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+
+permissions:
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run tests
+        run: ./.github/actions/tests
+      - name: Run SonarQube analysis with report
+        uses: ./.github/actions/sonarqube-analysis
