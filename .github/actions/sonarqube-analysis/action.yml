@@ -3,6 +3,7 @@ description: 'Run job to analys the PR with SonarQube'
 
 runs:
   using: "composite"
+  runs-on: ubuntu-latest
   steps:
     - name: Checkout
       uses: actions/checkout@v3
