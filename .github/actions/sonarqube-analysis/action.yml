@@ -34,7 +34,9 @@ runs:
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
     - name: Prepare artifact for scanning
-      run: unzip -o build.zip
+      run: |
+        chmod -R u+w .
+        unzip -o build.zip
       shell: bash
     - name: SonarQube Scan
       run: |
