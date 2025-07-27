@@ -19,6 +19,6 @@ jobs:
 
     steps:
       - name: Run tests
-        run: ./.github/actions/tests
+        run: ./actions/tests
       - name: Run SonarQube analysis with report
-        uses: ./.github/actions/sonarqube-analysis
+        uses: ./actions/sonarqube-analysis
