@@ -18,7 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
       - name: Run tests
-        run: .github/actions/tests/tests
+        uses: ./.github/actions/tests
       - name: Run SonarQube analysis with report
-        uses: .github/actions/sonarqube-analysis
+        uses: ./.github/actions/sonarqube-analysis
