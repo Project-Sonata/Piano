@@ -23,7 +23,9 @@ runs:
       with:
         fetch-depth: '0'
     - name: Change wrapper permissions
-      run: chmod +x ./gradlew
+      run: | 
+        chmod +x ./gradlew
+        echo 'Gradle wrapper permissions updated'
       shell: bash
     - name: Download build
       uses: actions/download-artifact@v4
