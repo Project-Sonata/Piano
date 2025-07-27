@@ -17,4 +17,3 @@ runs:
       with:
         name: build-out
         path: 'build.zip'
-      shell: bash
