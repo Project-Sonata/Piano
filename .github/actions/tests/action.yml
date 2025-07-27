@@ -3,16 +3,18 @@ description: 'Run job to analys the PR with SonarQube'
 
 runs:
   using: "composite"
-  runs-on: ubuntu-latest
   steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Run tests
       run: bash run-tests.sh
+      shell: bash
     - name: Prepare build artifact
       run: zip -r build.zip build/
+      shell: bash
     - name: Upload build
       uses: actions/upload-artifact@v4
       with:
         name: build-out
         path: 'build.zip'
+      shell: bash
