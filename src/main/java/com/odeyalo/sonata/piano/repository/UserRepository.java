@@ -1,7 +1,6 @@
 package com.odeyalo.sonata.piano.repository;
 
 import com.odeyalo.sonata.piano.entity.UserEntity;
-import com.odeyalo.sonata.piano.model.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Mono;

@@ -1,7 +1,6 @@
 package com.odeyalo.sonata.piano.entity;
 
 import com.odeyalo.sonata.piano.model.Gender;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
