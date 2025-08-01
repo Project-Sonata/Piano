@@ -14,8 +14,8 @@ public final class SimpleConfirmationCodeFactory implements ConfirmationCodeFact
     @Override
     @NotNull
     public ConfirmationCode newConfirmationCodeFor(@NotNull final User user) {
-        String value = RandomStringUtils.randomNumeric(6);
-        return new ConfirmationCode(value,
+        return new ConfirmationCode(
+                RandomStringUtils.randomNumeric(6),
                 Instant.now(),
                 Instant.now().plusSeconds(360),
                 user

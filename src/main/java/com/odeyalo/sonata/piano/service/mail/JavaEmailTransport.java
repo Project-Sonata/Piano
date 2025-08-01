@@ -21,8 +21,8 @@ public final class JavaEmailTransport implements EmailTransport {
     public Mono<Void> sendEmail(@NotNull final EmailMessage payload) {
         return smtpSessionFactory.getSession().handle((session, sink) -> {
 
-            MimeMessage mimeMessage = new MimeMessage(session);
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+            final MimeMessage mimeMessage = new MimeMessage(session);
+            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 
             try {
                 message.setFrom("greetings@sonata.com");

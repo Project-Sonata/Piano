@@ -16,7 +16,6 @@ public final class InMemoryConfirmationCodeService implements ConfirmationCodeSe
     private final Map<String, ConfirmationCode> confirmationCodes;
     private final ConfirmationCodeFactory confirmationCodeFactory;
 
-    @Autowired
     public InMemoryConfirmationCodeService(final ConfirmationCodeFactory confirmationCodeFactory) {
         this.confirmationCodeFactory = confirmationCodeFactory;
         this.confirmationCodes = new ConcurrentHashMap<>();
@@ -35,7 +34,7 @@ public final class InMemoryConfirmationCodeService implements ConfirmationCodeSe
     @NotNull
     public Mono<ConfirmationCode> newConfirmationCodeFor(final @NotNull User user) {
         return Mono.fromCallable(() -> {
-            ConfirmationCode code = confirmationCodeFactory.newConfirmationCodeFor(user);
+            final ConfirmationCode code = confirmationCodeFactory.newConfirmationCodeFor(user);
             confirmationCodes.put(code.value(), code);
             return code;
         });
