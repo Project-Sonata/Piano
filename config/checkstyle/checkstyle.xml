@@ -11,5 +11,6 @@
         <module name="UnusedLocalVariable"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="ModifierOrder"/>
+        <module name="ConstantName"/>
     </module>
 </module>
