@@ -14,8 +14,8 @@ public final class SimpleConfirmationCodeFactory implements ConfirmationCodeFact
     @Override
     @NotNull
     public ConfirmationCode newConfirmationCodeFor(@NotNull final User user) {
-        SecureRandom random = new SecureRandom();
-        int number = random.nextInt(900000) + 100000;
+        final SecureRandom random = new SecureRandom();
+        final int number = random.nextInt(900000) + 100000;
 
         return new ConfirmationCode(
                 String.valueOf(number),
