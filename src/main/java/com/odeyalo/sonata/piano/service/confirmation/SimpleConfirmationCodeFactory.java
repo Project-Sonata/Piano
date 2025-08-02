@@ -1,8 +1,6 @@
 package com.odeyalo.sonata.piano.service.confirmation;
 
 import com.odeyalo.sonata.piano.model.User;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.SecureRandom;
