@@ -8,5 +8,6 @@
         <module name="FinalLocalVariable"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
+        <module name="UnusedLocalVariable"/>
     </module>
 </module>
