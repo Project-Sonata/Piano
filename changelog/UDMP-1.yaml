@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-1: Add basic lint to project, basic checkstyle rules"

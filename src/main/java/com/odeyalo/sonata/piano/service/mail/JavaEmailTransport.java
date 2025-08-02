@@ -1,13 +1,12 @@
 package com.odeyalo.sonata.piano.service.mail;
 
 import com.odeyalo.sonata.piano.service.mail.support.SmtpSessionFactory;
-import jakarta.mail.*;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Transport;
 import jakarta.mail.internet.MimeMessage;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import reactor.core.publisher.Mono;
-
-import java.util.Properties;
 
 public final class JavaEmailTransport implements EmailTransport {
     private final SmtpSessionFactory smtpSessionFactory;
@@ -21,8 +20,8 @@ public final class JavaEmailTransport implements EmailTransport {
     public Mono<Void> sendEmail(@NotNull final EmailMessage payload) {
         return smtpSessionFactory.getSession().handle((session, sink) -> {
 
-            MimeMessage mimeMessage = new MimeMessage(session);
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+            final MimeMessage mimeMessage = new MimeMessage(session);
+            final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 
             try {
                 message.setFrom("greetings@sonata.com");

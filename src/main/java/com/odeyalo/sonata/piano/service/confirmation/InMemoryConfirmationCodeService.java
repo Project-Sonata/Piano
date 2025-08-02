@@ -3,7 +3,6 @@ package com.odeyalo.sonata.piano.service.confirmation;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -16,7 +15,6 @@ public final class InMemoryConfirmationCodeService implements ConfirmationCodeSe
     private final Map<String, ConfirmationCode> confirmationCodes;
     private final ConfirmationCodeFactory confirmationCodeFactory;
 
-    @Autowired
     public InMemoryConfirmationCodeService(final ConfirmationCodeFactory confirmationCodeFactory) {
         this.confirmationCodeFactory = confirmationCodeFactory;
         this.confirmationCodes = new ConcurrentHashMap<>();
@@ -35,7 +33,7 @@ public final class InMemoryConfirmationCodeService implements ConfirmationCodeSe
     @NotNull
     public Mono<ConfirmationCode> newConfirmationCodeFor(final @NotNull User user) {
         return Mono.fromCallable(() -> {
-            ConfirmationCode code = confirmationCodeFactory.newConfirmationCodeFor(user);
+            final ConfirmationCode code = confirmationCodeFactory.newConfirmationCodeFor(user);
             confirmationCodes.put(code.value(), code);
             return code;
         });

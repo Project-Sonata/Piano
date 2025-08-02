@@ -1,6 +1,5 @@
 package com.odeyalo.sonata.piano.config;
 
-import com.odeyalo.sonata.piano.support.html.TemplateEngine;
 import com.odeyalo.sonata.piano.support.html.ThymeleafTemplateEngine;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

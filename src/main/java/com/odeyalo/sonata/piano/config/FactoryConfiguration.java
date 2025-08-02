@@ -2,7 +2,10 @@ package com.odeyalo.sonata.piano.config;
 
 import com.odeyalo.sonata.piano.model.factory.DefaultUserFactory;
 import com.odeyalo.sonata.piano.model.factory.UserFactory;
-import com.odeyalo.sonata.piano.service.confirmation.*;
+import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeFactory;
+import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationMessageTemplateFactory;
+import com.odeyalo.sonata.piano.service.confirmation.HtmlEmailConfirmationMessageTemplateFactory;
+import com.odeyalo.sonata.piano.service.confirmation.SimpleConfirmationCodeFactory;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.support.html.TemplateEngine;
 import org.jetbrains.annotations.NotNull;

@@ -1,0 +1,27 @@
+name: lint
+
+on:
+  pull_request:
+    branches:
+      - master
+
+env:
+  GH_USERNAME: ${{ secrets.GH_USERNAME }}
+  GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      - name: Lint
+        run: |
+          ./gradlew checkstyleMain
+        env:
+          GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
