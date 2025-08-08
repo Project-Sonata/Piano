@@ -25,6 +25,10 @@ tasks.withType(Checkstyle).configureEach {
     }
 }
 
+checkstyleMain {
+    checkstyleClasspath += files("$rootDir/buildSrc/build/libs/buildSrc.jar")
+}
+
 jacocoTestReport {
     dependsOn test
     reports {
