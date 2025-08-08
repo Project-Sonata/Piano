@@ -1,6 +1,5 @@
 package com.odeyalo.checkstyle;
 
-import com.google.common.primitives.Primitives;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
@@ -52,8 +51,6 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
 
         logger.info("Package '{}' will be processed", currentPackage);
 
-        System.out.println("variable is + " + variableDef.findFirstToken(TokenTypes.TYPE).getChildCount(TokenTypes.IDENT));
-
         final String variableType = variableDef
                 .findFirstToken(TokenTypes.TYPE)
                 .getFirstChild()
@@ -64,20 +61,27 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
             return;
         }
 
+        if ( !checkVariableAnnotatedWith(variableDef) ) {
+            log(variableDef.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
+        }
+    }
 
+    public void setPackagesToInclude(@NotNull final String[] packagesToIncludeRegex) {
+        this.packagesToInclude = Arrays.stream(packagesToIncludeRegex)
+                .map(Pattern::compile)
+                .toArray(Pattern[]::new);
+    }
+
+    private boolean checkVariableAnnotatedWith(@NotNull final DetailAST variableDef) {
         final DetailAST modifiers = variableDef.findFirstToken(TokenTypes.MODIFIERS);
 
         if ( modifiers == null || !modifiers.hasChildren() ) {
-            return;
+            return false;
         }
 
-        DetailAST annotation = modifiers.getFirstChild();
+        final DetailAST modifier = modifiers.getFirstChild();
 
-        boolean hasAnnotation = checkFieldAnnotatedWith(annotation);
-
-        if ( !hasAnnotation ) {
-            log(variableDef.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
-        }
+        return checkModifiersForAnnotation(modifier);
     }
 
     private boolean isPrimitive(@NotNull final String variableType) {
@@ -91,26 +95,26 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
                 || variableType.equals("double");
     }
 
-    private static boolean checkFieldAnnotatedWith(@NotNull final DetailAST annotationDef) {
+    private boolean checkModifiersForAnnotation(@NotNull final DetailAST modifiers) {
 
-        DetailAST currAnnotation = annotationDef;
+        DetailAST currModifier = modifiers;
 
-        while (currAnnotation != null && currAnnotation.getType() == TokenTypes.ANNOTATION) {
+        while (currModifier != null && currModifier.getType() == TokenTypes.ANNOTATION) {
 
-            DetailAST annotationName = currAnnotation.findFirstToken(TokenTypes.IDENT);
+            DetailAST annotationName = currModifier.findFirstToken(TokenTypes.IDENT);
 
             if ( StringUtils.equalsAny(annotationName.getText(), "NotNull", "Nullable") ) {
                 return true;
             }
 
-            currAnnotation = currAnnotation.getNextSibling();
+            currModifier = currModifier.getNextSibling();
         }
 
         return false;
     }
 
     @NotNull
-    private static String getCurrentPackageFullName(@NotNull final DetailAST variableDef) {
+    private String getCurrentPackageFullName(@NotNull final DetailAST variableDef) {
         if ( variableDef.getParent().getParent() == null ||
                 variableDef.getParent().getParent().getType() != TokenTypes.CLASS_DEF ) {
             return NO_PACKAGE;
@@ -129,11 +133,5 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
         final FullIdent fullIdent = FullIdent.createFullIdent(packageNameAst);
 
         return fullIdent.getText();
-    }
-
-    public void setPackagesToInclude(@NotNull final String[] packagesToIncludeRegex) {
-        this.packagesToInclude = Arrays.stream(packagesToIncludeRegex)
-                .map(Pattern::compile)
-                .toArray(Pattern[]::new);
     }
 }
