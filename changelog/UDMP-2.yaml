@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-2: Add custom rule for checkstyle: check that all non-primitive fields are annotated with NotNull/Nullable annotations"
