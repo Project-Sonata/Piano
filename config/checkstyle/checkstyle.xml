@@ -13,8 +13,9 @@
         <module name="ModifierOrder"/>
         <module name="ConstantName"/>
         <module name="com.odeyalo.checkstyle.RequiredFieldAnnotationCheck">
-            <property name="packagesToExclude" value="com.odeyalo.sonata.piano.service"/>
-            <property name="packagesToExclude" value="com.odeyalo.sonata.piano.config"/>
+            <property name="packagesToInclude" value="com.odeyalo.*.dto*"/>
+            <property name="packagesToInclude" value="com.odeyalo.*.model*"/>
+            <property name="packagesToInclude" value="com.odeyalo.*.entity*"/>
         </module>
     </module>
 </module>

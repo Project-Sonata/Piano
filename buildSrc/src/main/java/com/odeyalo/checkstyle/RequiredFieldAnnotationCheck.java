@@ -4,23 +4,19 @@ import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.AnnotationUtil;
-import com.puppycrawl.tools.checkstyle.utils.CheckUtil;
-import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
-import com.puppycrawl.tools.checkstyle.utils.FilterUtil;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public final class RequiredFieldAnnotationCheck extends AbstractCheck {
+    private Pattern[] packagesToInclude = new Pattern[0];
 
-    private String[] packagesToExclude = new String[0];
     private final Logger logger = LoggerFactory.getLogger(RequiredFieldAnnotationCheck.class);
+    private static final String NO_PACKAGE = "";
 
     @Override
     public int[] getDefaultTokens() {
@@ -41,55 +37,64 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
 
     @Override
     public void visitToken(@NotNull final DetailAST ast) {
-        if ( ast.getType() == TokenTypes.VARIABLE_DEF
-                && ast.getParent().getType() == TokenTypes.OBJBLOCK ) {
+        if ( ast.getType() != TokenTypes.VARIABLE_DEF
+                || ast.getParent().getType() != TokenTypes.OBJBLOCK ) {
+            return;
+        }
 
-            final String currentPackage = getCurrentPackage(ast);
+        final String currentPackage = getCurrentPackageFullName(ast);
 
-            if ( ArrayUtils.contains(packagesToExclude, currentPackage) ) {
-                logger.info("'{}' has been skipped because marked as excluded package", currentPackage);
-                return;
-            }
+        if ( Arrays.stream(packagesToInclude).noneMatch(pattern -> pattern.matcher(currentPackage).matches()) ) {
+            logger.info("Package '{}' has been skipped because not matched any patterns", currentPackage);
+            return;
+        }
 
-            final DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);
+        logger.info("Package '{}' will be processed", currentPackage);
 
-            if ( modifiers == null || !modifiers.hasChildren() ) {
-                return;
-            }
+        final DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);
 
-            DetailAST annotation = modifiers.getFirstChild();
+        if ( modifiers == null || !modifiers.hasChildren() ) {
+            return;
+        }
 
-            boolean hasAnnotation = false;
+        DetailAST annotation = modifiers.getFirstChild();
 
-            while (annotation != null && annotation.getType() == TokenTypes.ANNOTATION) {
+        boolean hasAnnotation = checkFieldAnnotatedWith(annotation);
 
-                DetailAST annotationName = annotation.findFirstToken(TokenTypes.IDENT);
-
-                if ( StringUtils.equalsAny(annotationName.getText(), "NotNull", "Nullable") ) {
-                    hasAnnotation = true;
-                    break;
-                }
-
-                annotation = annotation.getNextSibling();
-            }
-
-            if ( !hasAnnotation ) {
-                log(ast.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
-            }
+        if ( !hasAnnotation ) {
+            log(ast.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
         }
     }
 
-    @Nullable
-    private static String getCurrentPackage(@NotNull final DetailAST variableDef) {
+    private static boolean checkFieldAnnotatedWith(@NotNull final DetailAST annotationDef) {
+
+        DetailAST currAnnotation = annotationDef;
+
+        while (currAnnotation != null && currAnnotation.getType() == TokenTypes.ANNOTATION) {
+
+            DetailAST annotationName = currAnnotation.findFirstToken(TokenTypes.IDENT);
+
+            if ( StringUtils.equalsAny(annotationName.getText(), "NotNull", "Nullable") ) {
+                return true;
+            }
+
+            currAnnotation = currAnnotation.getNextSibling();
+        }
+
+        return false;
+    }
+
+    @NotNull
+    private static String getCurrentPackageFullName(@NotNull final DetailAST variableDef) {
         if ( variableDef.getParent().getParent() == null ||
                 variableDef.getParent().getParent().getType() != TokenTypes.CLASS_DEF ) {
-            return null;
+            return NO_PACKAGE;
         }
 
         final DetailAST classDef = variableDef.getParent().getParent();
 
         if ( classDef.getParent() == null || classDef.getParent().getType() != TokenTypes.COMPILATION_UNIT ) {
-            return null;
+            return NO_PACKAGE;
         }
 
         final DetailAST compilationUnit = classDef.getParent();
@@ -101,9 +106,9 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
         return fullIdent.getText();
     }
 
-    public void setPackagesToExclude(final String[] packagesToExclude) {
-        this.packagesToExclude = packagesToExclude;
-
-        logger.info("{} set to be excluded", Arrays.toString(packagesToExclude));
+    public void setPackagesToInclude(@NotNull final String[] packagesToIncludeRegex) {
+        this.packagesToInclude = Arrays.stream(packagesToIncludeRegex)
+                .map(Pattern::compile)
+                .toArray(Pattern[]::new);
     }
 }
