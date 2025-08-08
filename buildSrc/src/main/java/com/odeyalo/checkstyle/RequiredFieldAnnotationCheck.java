@@ -37,32 +37,33 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
 
     @Override
     public void visitToken(@NotNull final DetailAST variableDef) {
-        if ( variableDef.getType() != TokenTypes.VARIABLE_DEF
-                || variableDef.getParent().getType() != TokenTypes.OBJBLOCK ) {
+        if ( isVariable(variableDef) ) {
             return;
         }
 
-        final String currentPackage = getCurrentPackageFullName(variableDef);
+        final DetailAST field = variableDef;
 
-        if ( Arrays.stream(packagesToInclude).noneMatch(pattern -> pattern.matcher(currentPackage).matches()) ) {
+        final String currentPackage = getCurrentPackageFullName(field);
+
+        if ( shouldPackageBeSkipped(currentPackage) ) {
             logger.info("Package '{}' has been skipped because not matched any patterns", currentPackage);
             return;
         }
 
         logger.info("Package '{}' will be processed", currentPackage);
 
-        final String variableType = variableDef
+        final String fieldType = field
                 .findFirstToken(TokenTypes.TYPE)
                 .getFirstChild()
                 .getText();
 
-        if ( isPrimitive(variableType) ) {
+        if ( isPrimitive(fieldType) ) {
             // No need to annotate primitives with NotNull/Nullable annotations
             return;
         }
 
-        if ( !checkVariableAnnotatedWith(variableDef) ) {
-            log(variableDef.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
+        if ( !checkVariableAnnotatedWith(field) ) {
+            log(field.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
         }
     }
 
@@ -70,6 +71,15 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
         this.packagesToInclude = Arrays.stream(packagesToIncludeRegex)
                 .map(Pattern::compile)
                 .toArray(Pattern[]::new);
+    }
+
+    private static boolean isVariable(@NotNull final DetailAST variableDef) {
+        return variableDef.getParent().getType() != TokenTypes.OBJBLOCK;
+    }
+
+    private boolean shouldPackageBeSkipped(@NotNull final String currentPackage) {
+        return Arrays.stream(packagesToInclude)
+                .noneMatch(pattern -> pattern.matcher(currentPackage).matches());
     }
 
     private boolean checkVariableAnnotatedWith(@NotNull final DetailAST variableDef) {
@@ -126,12 +136,11 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
             return NO_PACKAGE;
         }
 
-        final DetailAST compilationUnit = classDef.getParent();
-        final DetailAST packageDef = compilationUnit.findFirstToken(TokenTypes.PACKAGE_DEF);
+        final DetailAST packageNameAst = classDef.getParent()
+                .findFirstToken(TokenTypes.PACKAGE_DEF)
+                .getLastChild()
+                .getPreviousSibling();
 
-        final DetailAST packageNameAst = packageDef.getLastChild().getPreviousSibling();
-        final FullIdent fullIdent = FullIdent.createFullIdent(packageNameAst);
-
-        return fullIdent.getText();
+        return FullIdent.createFullIdent(packageNameAst).getText();
     }
 }
