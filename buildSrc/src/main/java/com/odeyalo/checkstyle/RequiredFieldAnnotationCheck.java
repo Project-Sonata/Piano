@@ -1,5 +1,6 @@
 package com.odeyalo.checkstyle;
 
+import com.google.common.primitives.Primitives;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
@@ -36,13 +37,13 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
     }
 
     @Override
-    public void visitToken(@NotNull final DetailAST ast) {
-        if ( ast.getType() != TokenTypes.VARIABLE_DEF
-                || ast.getParent().getType() != TokenTypes.OBJBLOCK ) {
+    public void visitToken(@NotNull final DetailAST variableDef) {
+        if ( variableDef.getType() != TokenTypes.VARIABLE_DEF
+                || variableDef.getParent().getType() != TokenTypes.OBJBLOCK ) {
             return;
         }
 
-        final String currentPackage = getCurrentPackageFullName(ast);
+        final String currentPackage = getCurrentPackageFullName(variableDef);
 
         if ( Arrays.stream(packagesToInclude).noneMatch(pattern -> pattern.matcher(currentPackage).matches()) ) {
             logger.info("Package '{}' has been skipped because not matched any patterns", currentPackage);
@@ -51,7 +52,20 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
 
         logger.info("Package '{}' will be processed", currentPackage);
 
-        final DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);
+        System.out.println("variable is + " + variableDef.findFirstToken(TokenTypes.TYPE).getChildCount(TokenTypes.IDENT));
+
+        final String variableType = variableDef
+                .findFirstToken(TokenTypes.TYPE)
+                .getFirstChild()
+                .getText();
+
+        if ( isPrimitive(variableType) ) {
+            // No need to annotate primitives with NotNull/Nullable annotations
+            return;
+        }
+
+
+        final DetailAST modifiers = variableDef.findFirstToken(TokenTypes.MODIFIERS);
 
         if ( modifiers == null || !modifiers.hasChildren() ) {
             return;
@@ -62,8 +76,19 @@ public final class RequiredFieldAnnotationCheck extends AbstractCheck {
         boolean hasAnnotation = checkFieldAnnotatedWith(annotation);
 
         if ( !hasAnnotation ) {
-            log(ast.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
+            log(variableDef.getLineNo(), "Missing @NotNull or @Nullable annotation for field");
         }
+    }
+
+    private boolean isPrimitive(@NotNull final String variableType) {
+        return variableType.equals("boolean")
+                || variableType.equals("char")
+                || variableType.equals("byte")
+                || variableType.equals("short")
+                || variableType.equals("int")
+                || variableType.equals("long")
+                || variableType.equals("float")
+                || variableType.equals("double");
     }
 
     private static boolean checkFieldAnnotatedWith(@NotNull final DetailAST annotationDef) {

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Column;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @With
 public class UserEntity {
     @Id
+    @Nullable
     Long id;
     @NotNull
     @Column("external_id")
