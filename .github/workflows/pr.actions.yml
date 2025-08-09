@@ -30,8 +30,7 @@ jobs:
           name: "build-out"
       - name: Prepare artifact for scanning
         run: |
-          chmod +x ./gradlew
-          unzip -o build.zip
+          unzip build.zip
       - name: Run SonarQube analysis with report
         uses: ./.github/actions/sonarqube-analysis
         with:
