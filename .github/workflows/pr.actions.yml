@@ -16,7 +16,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Change wrapper permissions
@@ -25,6 +24,14 @@ jobs:
             echo 'Gradle wrapper permissions updated'
       - name: Run tests
         uses: ./.github/actions/tests
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: "build-out"
+      - name: Prepare artifact for scanning
+        run: |
+          chmod +x ./gradlew
+          unzip -o build.zip
       - name: Run SonarQube analysis with report
         uses: ./.github/actions/sonarqube-analysis
         with:

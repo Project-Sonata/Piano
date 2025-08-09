@@ -18,20 +18,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download build
-      uses: actions/download-artifact@v4
-      with:
-        name: "build-out"
     - name: Cache SonarQube packages
       uses: actions/cache@v4
       with:
         path: ~/.sonar/cache
         key: ${{ runner.os }}-sonar
         restore-keys: ${{ runner.os }}-sonar
-    - name: Prepare artifact for scanning
-      run: |
-        unzip -o build.zip
-      shell: bash
     - name: SonarQube Scan
       run: |
         ./gradlew sonar -Dsonar.projectKey=sonata-piano \
