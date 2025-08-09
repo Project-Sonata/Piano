@@ -28,10 +28,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "build-out"
-      - name: Prepare artifact for scanning
-        run: |
-          chmod u+wx build
-          unzip -o build.zip
       - name: Run SonarQube analysis with report
         uses: ./.github/actions/sonarqube-analysis
         with:
