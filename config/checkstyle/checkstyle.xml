@@ -12,5 +12,10 @@
         <module name="SimplifyBooleanReturn"/>
         <module name="ModifierOrder"/>
         <module name="ConstantName"/>
+        <module name="com.odeyalo.checkstyle.RequiredFieldAnnotationCheck">
+            <property name="packagesToInclude" value="com.odeyalo.*.dto*"/>
+            <property name="packagesToInclude" value="com.odeyalo.*.model*"/>
+            <property name="packagesToInclude" value="com.odeyalo.*.entity*"/>
+        </module>
     </module>
 </module>
