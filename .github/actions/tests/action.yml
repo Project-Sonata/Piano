@@ -1,0 +1,17 @@
+name: 'Sonarqube analysis'
+description: 'Run job to analys the PR with SonarQube'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run tests
+      run: bash run-tests.sh
+      shell: bash
+    - name: Prepare build artifact
+      run: zip -r build.zip build/
+      shell: bash
+    - name: Upload build
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-out
+        path: 'build.zip'
