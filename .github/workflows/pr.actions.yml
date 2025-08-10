@@ -1,4 +1,4 @@
-name: tests-and-sonar
+name: tests
 
 on:
   pull_request:
@@ -20,10 +20,22 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run tests
         uses: ./.github/actions/tests
-      - name: Run SonarQube analysis with report
-        uses: ./.github/actions/sonarqube-analysis
-        with:
-          gh_username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
+
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download build
+      uses: actions/download-artifact@v4
+      with:
+        name: "build-out"
+    - name: Prepare artifact for scanning
+      run: |
+        unzip build.zip
+        echo "Unzipped tests build successfully. Ready for Sonarqube scanning..."
+    - name: Run SonarQube analysis with report
+      uses: ./.github/actions/sonarqube-analysis
+      with:
+        gh_username: ${{ secrets.GITHUB_USERNAME }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
