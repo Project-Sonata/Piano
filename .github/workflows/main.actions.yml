@@ -3,7 +3,7 @@ name: tests
 on:
   push:
     branches:
-      master
+      - master
 
 env:
   GH_USERNAME: ${{ secrets.GH_USERNAME }}
