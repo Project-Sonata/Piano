@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "Sonata-3: Fix bug when pipeline fails when PR is merged to master"
