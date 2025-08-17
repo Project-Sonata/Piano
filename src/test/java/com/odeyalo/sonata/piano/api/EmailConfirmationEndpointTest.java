@@ -4,9 +4,11 @@ import com.odeyalo.sonata.piano.api.exchange.dto.EmailConfirmationCodeDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
+import com.odeyalo.sonata.piano.repository.UserRepository;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCode;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeService;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -40,9 +42,17 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
     @Autowired
     PianoClient pianoClient;
 
+    @Autowired
+    UserRepository userRepository;
+
     public static final String VALID_CONFIRMATION_CODE = "123456";
     public static final String INVALID_CONFIRMATION_CODE = "666666";
     public static final String EXPIRED_CONFIRMATION_CODE = "111111";
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll().block();
+    }
 
     @TestConfiguration
     static class ConfirmationCodeConfiguration {
