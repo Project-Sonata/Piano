@@ -19,10 +19,6 @@ public final class InMemoryUserService implements UserService {
     private final Map<UserId, User> users;
     private final Logger logger = LoggerFactory.getLogger(InMemoryUserService.class);
 
-    public InMemoryUserService(final Map<UserId, User> users) {
-        this.users = users;
-    }
-
     public InMemoryUserService(final List<User> users) {
         this.users = users.stream()
                 .collect(Collectors.toMap(User::id, Function.identity()));
