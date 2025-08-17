@@ -51,19 +51,4 @@ public record Birthdate(@NotNull LocalDate value) {
                 .minusYears(minimalAllowedAge)
                 .isAfter(value);
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if ( obj == this ) return true;
-
-        if ( obj instanceof final Birthdate other ) {
-            return value.equals(other.value);
-        }
-
-        if ( obj instanceof final LocalDate other ) {
-            return value.equals(other);
-        }
-
-        return false;
-    }
 }
