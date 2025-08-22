@@ -24,15 +24,30 @@ jobs:
       - name: Prepare environment
         run: pip install pyyaml
       - name: Validate new changelog file
+        id: validate-new
         env:
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
-        run: "python ci/changelog.py -a ${ALL_ADDED_FILES}"
+        run:
+          "python ci/changelog.py -a ${ALL_ADDED_FILES}"
+          echo status=true >> "$GITHUB_OUTPUT"
 
       - name: Changelog files should not be changed
+        id: changelogs-are-not-changed
         env:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
-        run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
+        run:
+          "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
+          echo status=true >> "$GITHUB_OUTPUT"
+      - name: Get current UTC time
+        id: datetime
+        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
+      - name: Notify
+        run:
+          echo ${{steps.changelogs-are-not-changed.outputs.status}}
+          echo ${{steps.validate-new.outputs.status}}
+
+
   notify-on-success:
 
     runs-on: ubuntu-latest
