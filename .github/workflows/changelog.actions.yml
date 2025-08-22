@@ -43,6 +43,7 @@ jobs:
         id: datetime
         run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
       - name: Notify
+        if: always()
         run:
           echo ${{steps.changelogs-are-not-changed.outputs.status}}
           echo ${{steps.validate-new.outputs.status}}
