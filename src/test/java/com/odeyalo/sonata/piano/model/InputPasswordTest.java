@@ -2,11 +2,11 @@ package com.odeyalo.sonata.piano.model;
 
 import com.odeyalo.sonata.piano.exception.PasswordRegexException;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 
 class InputPasswordTest {
@@ -33,5 +33,26 @@ class InputPasswordTest {
         assertThatThrownBy(() -> InputPassword.valueOf(input))
                 .isInstanceOf(PasswordRegexException.class)
                 .hasMessage("Password does not match regex, password must have 8 characters with at least one number");
+    }
+
+    @Test
+    void shouldProperlyReturnLengthOfThePassword() {
+        final InputPassword password = InputPassword.valueOf("hello123");
+
+        assertThat(password).hasSize(8);
+    }
+
+    @Test
+    void shouldProperlyReturnCharacterAtIndex() {
+        final InputPassword password = InputPassword.valueOf("heelo123");
+
+        assertThat(password.charAt(3)).isEqualTo('l');
+    }
+
+    @Test
+    void shouldProperlyReturnSubSequence() {
+        final InputPassword password = InputPassword.valueOf("hello123456");
+
+        assertThat(password.subSequence(1, 5)).isEqualTo("ello");
     }
 }

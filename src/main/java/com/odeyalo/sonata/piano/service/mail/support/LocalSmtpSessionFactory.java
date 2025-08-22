@@ -30,6 +30,16 @@ public final class LocalSmtpSessionFactory implements SmtpSessionFactory {
         logger.info("Initialized LocalSmtpSessionFactory with custom values {}", smtpProperties);
     }
 
+    @NotNull
+    public static LocalSmtpSessionFactory onPort(final int port) {
+        final Properties defaultSmtpProperties = new Properties();
+
+        defaultSmtpProperties.put("mail.smtp.host", "localhost");
+        defaultSmtpProperties.put("mail.smtp.port", port);
+
+        return new LocalSmtpSessionFactory(defaultSmtpProperties);
+    }
+
     @Override
     @NotNull
     public Mono<Session> getSession() {

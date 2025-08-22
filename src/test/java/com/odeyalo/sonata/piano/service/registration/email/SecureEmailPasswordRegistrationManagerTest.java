@@ -136,7 +136,7 @@ class SecureEmailPasswordRegistrationManagerTest {
 
         assertThat(result).isNotNull();
 
-        assertThat(result.registeredUser().birthdate()).isEqualTo(birthdate);
+        assertThat(result.registeredUser().birthdate().toLocalDate()).isEqualTo(birthdate);
     }
 
     @Test

@@ -5,12 +5,13 @@ import com.odeyalo.sonata.piano.service.mail.support.LocalSmtpSessionFactory;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import lombok.SneakyThrows;
 import name.bychkov.junit5.FakeSmtpJUnitExtension;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.time.Duration;
 import java.util.List;
 
@@ -18,14 +19,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JavaEmailTransportTest {
 
+    static int PORT = freePort();
+
+    @SneakyThrows
+    private static int freePort() {
+        try (ServerSocket server = new ServerSocket(0)) {
+            return server.getLocalPort();
+        }
+    }
+
     @RegisterExtension
-    static FakeSmtpJUnitExtension smtpServer = new FakeSmtpJUnitExtension();
+    static FakeSmtpJUnitExtension smtpServer = new FakeSmtpJUnitExtension()
+            .port(PORT);
 
     @Test
     void shouldSendEmailToSmtpServer() throws MessagingException, IOException {
         // given
         final JavaEmailTransport testable = new JavaEmailTransport(
-                new LocalSmtpSessionFactory()
+                LocalSmtpSessionFactory.onPort(PORT)
         );
 
         // when
