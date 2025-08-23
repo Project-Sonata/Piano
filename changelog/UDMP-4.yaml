@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-4: Refactor changelog validation CI step"
