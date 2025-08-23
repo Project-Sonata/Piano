@@ -13,7 +13,12 @@ env:
 jobs:
   changelog:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
+      - name: Get current UTC time
+        id: datetime
+        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get changed files
@@ -27,66 +32,49 @@ jobs:
         env:
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
         run: "python ci/changelog.py -a ${ALL_ADDED_FILES}"
-
       - name: Changelog files should not be changed
         env:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
         run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
-  notify-on-success:
-
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    needs: [ changelog ]
-    if: ${{success() && needs.changelog.result == 'success'}}
-    steps:
-      - name: Get current UTC time
-        id: datetime
-        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
-      - uses: mshick/add-pr-comment@v2
+      - name: Notify about success
+        if: success()
+        uses: mshick/add-pr-comment@v2
         with:
+          message-id: changelog-${{github.event.pull_request}}
           message: |
             Changelog validation successful!
-            
+
             ###### _updated: ${{ steps.datetime.outputs.now }}_
 
+      - name: Notify about failure
+        if: failure()
+        uses: mshick/add-pr-comment@v2
+        with:
           message-id: changelog-${{github.event.pull_request}}
-  notify-on-failure:
-      runs-on: ubuntu-latest
-      permissions:
-        pull-requests: write
-      needs: [changelog]
-      if: ${{failure() && needs.changelog.result == 'failure'}}
-      steps:
-        - name: Get current UTC time
-          id: datetime
-          run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
-        - uses: mshick/add-pr-comment@v2
-          with:
-            message-id: changelog-${{github.event.pull_request}}
-            message: | 
-              ## 🛑 Changelog Validation Failed
+          message: |
+                  ## 🛑 Changelog Validation Failed
+                  
+                  Your pull request is missing a valid changelog entry.
+                  
+                  ### 📋 What’s Required?
+                  
+                  All pull requests **must create** the `.yaml` file with a description of the change. This helps us:
+                  
+                    - Track new features and bug fixes
+                    - Generate release notes
+                    - Keep users informed
+                  
+                  ---
+                  
+                  ### 🧾 Expected format (example)
+                  
+                  ```yaml
+                  sonata:
+                    piano:
+                      enhancement:
+                        - "Sonata-1: Add changelog to project"
+                  ```
+                  
+                  ###### _updated: ${{ steps.datetime.outputs.now }}_
 
-              Your pull request is missing a valid changelog entry.
-
-              ### 📋 What’s Required?
-
-              All pull requests **must create** the `.yaml` file with a description of the change. This helps us:
-
-                - Track new features and bug fixes
-                - Generate release notes
-                - Keep users informed
-
-              ---
-
-              ### 🧾 Expected format (example)
-
-              ```yaml
-              sonata:
-                piano:
-                  enhancement:
-                    - "Sonata-1: Add changelog to project"
-              ```
-              
-              ###### _updated: ${{ steps.datetime.outputs.now }}_
