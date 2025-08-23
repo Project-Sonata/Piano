@@ -38,7 +38,7 @@ jobs:
         id: datetime
         run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
       - name: Notify
-        if: ${{steps.validate-new.outcome != 'success'}}
+        if: failure()
         run:
           echo ${{steps.changelogs-are-not-changed.outcome}}
           echo ${{steps.validate-new.outcome}}
