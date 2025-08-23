@@ -37,15 +37,39 @@ jobs:
       - name: Get current UTC time
         id: datetime
         run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
-      - name: Notify
+      - name: Notify about failure
         if: failure()
-        run:
-          echo ${{steps.changelogs-are-not-changed.outcome}}
-          echo ${{steps.validate-new.outcome}}
+        uses: mshick/add-pr-comment@v2
+        with:
+          message-id: changelog-${{github.event.pull_request}}
+          message: |
+                  ## 🛑 Changelog Validation Failed
+                  
+                  Your pull request is missing a valid changelog entry.
+                  
+                  ### 📋 What’s Required?
+                  
+                  All pull requests **must create** the `.yaml` file with a description of the change. This helps us:
+                  
+                    - Track new features and bug fixes
+                    - Generate release notes
+                    - Keep users informed
+                  
+                  ---
+                  
+                  ### 🧾 Expected format (example)
+                  
+                  ```yaml
+                  sonata:
+                    piano:
+                      enhancement:
+                        - "Sonata-1: Add changelog to project"
+                  ```
+                  
+                  ###### _updated: ${{ steps.datetime.outputs.now }}_
 
 
   notify-on-success:
-
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -63,41 +87,3 @@ jobs:
             ###### _updated: ${{ steps.datetime.outputs.now }}_
 
           message-id: changelog-${{github.event.pull_request}}
-  notify-on-failure:
-      runs-on: ubuntu-latest
-      permissions:
-        pull-requests: write
-      needs: [changelog]
-      if: ${{failure() && needs.changelog.result == 'failure'}}
-      steps:
-        - name: Get current UTC time
-          id: datetime
-          run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
-        - uses: mshick/add-pr-comment@v2
-          with:
-            message-id: changelog-${{github.event.pull_request}}
-            message: | 
-              ## 🛑 Changelog Validation Failed
-
-              Your pull request is missing a valid changelog entry.
-
-              ### 📋 What’s Required?
-
-              All pull requests **must create** the `.yaml` file with a description of the change. This helps us:
-
-                - Track new features and bug fixes
-                - Generate release notes
-                - Keep users informed
-
-              ---
-
-              ### 🧾 Expected format (example)
-
-              ```yaml
-              sonata:
-                piano:
-                  enhancement:
-                    - "Sonata-1: Add changelog to project"
-              ```
-              
-              ###### _updated: ${{ steps.datetime.outputs.now }}_
