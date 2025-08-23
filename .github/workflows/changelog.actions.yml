@@ -13,6 +13,8 @@ env:
 jobs:
   changelog:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -71,8 +73,7 @@ jobs:
 
   notify-on-success:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+
     needs: [ changelog ]
     if: ${{success() && needs.changelog.result == 'success'}}
     steps:
