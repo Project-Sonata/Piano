@@ -16,6 +16,9 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - name: Get current UTC time
+        id: datetime
+        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get changed files
@@ -26,19 +29,24 @@ jobs:
       - name: Prepare environment
         run: pip install pyyaml
       - name: Validate new changelog file
-        id: validate-new
         env:
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
         run: "python ci/changelog.py -a ${ALL_ADDED_FILES}"
       - name: Changelog files should not be changed
-        id: changelogs-are-not-changed
         env:
           ALL_CHANGED_AND_MODIFIED_FILES: ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
           ALL_ADDED_FILES: ${{ steps.changed-files.outputs.added_files }}
         run: "python ci/changelog.py -m ${ALL_CHANGED_AND_MODIFIED_FILES} ${ALL_ADDED_FILES}"
-      - name: Get current UTC time
-        id: datetime
-        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
+      - name: Notify about success
+        if: failure()
+        uses: mshick/add-pr-comment@v2
+        with:
+          message-id: changelog-${{github.event.pull_request}}
+          message: |
+            Changelog validation successful!
+
+            ###### _updated: ${{ steps.datetime.outputs.now }}_
+
       - name: Notify about failure
         if: failure()
         uses: mshick/add-pr-comment@v2
@@ -70,21 +78,3 @@ jobs:
                   
                   ###### _updated: ${{ steps.datetime.outputs.now }}_
 
-
-  notify-on-success:
-    runs-on: ubuntu-latest
-
-    needs: [ changelog ]
-    if: ${{success() && needs.changelog.result == 'success'}}
-    steps:
-      - name: Get current UTC time
-        id: datetime
-        run: echo now=$(date -u '+%-m/%-d/%Y, %H:%M:%S (UTC+0)') >> "$GITHUB_OUTPUT"
-      - uses: mshick/add-pr-comment@v2
-        with:
-          message: |
-            Changelog validation successful!
-            
-            ###### _updated: ${{ steps.datetime.outputs.now }}_
-
-          message-id: changelog-${{github.event.pull_request}}
