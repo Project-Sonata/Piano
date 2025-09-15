@@ -1,0 +1,9 @@
+openapi: 3.1.0
+info:
+  title: Full API
+  version: 1.0.0
+paths:
+  /email/confirm:
+    $ref: 'confirmation.openapi.yaml#/paths/~1email~1confirm'
+  /email:
+    $ref: 'registration.openapi.yaml#/paths/~1email'

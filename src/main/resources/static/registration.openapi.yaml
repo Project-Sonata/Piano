@@ -1,0 +1,54 @@
+openapi: 3.1.0
+info:
+  title: User Registration API
+  version: 1.0.0
+
+paths:
+  /email:
+    post:
+      summary: Register a user via email
+      operationId: emailRegistration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationForm'
+      responses:
+        '200':
+          description: Email confirmation required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailConfirmationRequiredResponseDto'
+        '400':
+          description: Invalid request data
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    RegistrationForm:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: secret123
+        username:
+          type: string
+          example: johndoe
+
+    EmailConfirmationRequiredResponseDto:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Email confirmation is required to complete registration."
