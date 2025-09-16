@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-5: Add OpenAPI 3.0 specification"
