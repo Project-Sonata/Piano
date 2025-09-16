@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: Email Confirmation API
+  version: 1.0.0
+paths:
+  /email/confirm:
+    post:
+      summary: Confirm user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailConfirmationCodeDto'
+      responses:
+        '200':
+          description: Email confirmed successfully
+        '400':
+          description: Invalid confirmation code
+components:
+  schemas:
+    EmailConfirmationCodeDto:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Confirmation code
+      required:
+        - code
