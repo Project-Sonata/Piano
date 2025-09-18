@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.api;
 
+import com.odeyalo.sonata.piano.api.dto.TokensDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.EmailConfirmationCodeDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
@@ -31,6 +32,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest
@@ -112,8 +114,8 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnOkIfConfirmationCodeIsValid() throws IOException {
-
         MockWebServer mockWebServer = new MockWebServer();
+
         mockWebServer
                 .enqueue(new MockResponse()
                         .setResponseCode(200)
@@ -129,6 +131,10 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
         WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
 
         answer.expectStatus().isOk();
+        answer.expectBody(TokensDto.class).value(tokens -> {
+            assertThat(tokens).isNotNull();
+            assertThat(tokens.accessToken()).isNotNull();
+        });
 
         mockWebServer.close();
     }
