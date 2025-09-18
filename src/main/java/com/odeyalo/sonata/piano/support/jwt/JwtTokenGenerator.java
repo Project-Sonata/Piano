@@ -12,6 +12,9 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.odeyalo.sonata.piano.support.jwt.JwtTokenGenerator.GenerationOptions.DefaultClaimsOverridePolicy.DO_NOT_OVERRIDE;
 
 /**
  * Generate JWT tokens only.
@@ -44,6 +47,21 @@ public interface JwtTokenGenerator {
 
         public static GenerationOptions useDefault() {
             return builder().build();
+        }
+
+        @NotNull
+        public Map<String, Object> getNormalizedClaims() {
+            if ( defaultClaimsOverridePolicy() != DO_NOT_OVERRIDE ) {
+                return additionalClaims();
+            }
+            return filterOutDefaultClaims();
+        }
+
+        @NotNull
+        private Map<String, Object> filterOutDefaultClaims() {
+            return additionalClaims().entrySet().stream()
+                    .filter(entry -> !DEFAULT_CLAIMS.contains(entry.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
         public enum DefaultClaimsOverridePolicy {

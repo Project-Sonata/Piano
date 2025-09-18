@@ -130,7 +130,7 @@ class SecretKeyJwtTokenManagerTest {
 
         testable.parseToken(token.tokenValue())
                 .as(StepVerifier::create)
-                .assertNext(actual -> assertThat(actual.remainingLifetime()).isPositive())
+                .assertNext(actual -> assertThat(actual.remainingLifetime().remaining()).isPositive())
                 .verifyComplete();
     }
 

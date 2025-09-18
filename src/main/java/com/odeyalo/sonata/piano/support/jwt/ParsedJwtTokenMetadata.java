@@ -3,7 +3,6 @@ package com.odeyalo.sonata.piano.support.jwt;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class ParsedJwtTokenMetadata {
     @Singular
     Map<String, Object> claims;
     @NotNull
-    Duration remainingLifetime;
+    Lifetime remainingLifetime;
 
     public int size() {
         return claims.size();
