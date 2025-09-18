@@ -7,6 +7,8 @@ import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.repository.UserRepository;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCode;
 import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeService;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import testing.api.client.PianoClient;
 import testing.api.client.config.AutoConfigurePianoClient;
 import testing.base.AbstractIntegrationTest;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -45,9 +48,11 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
     @Autowired
     UserRepository userRepository;
 
-    public static final String VALID_CONFIRMATION_CODE = "123456";
-    public static final String INVALID_CONFIRMATION_CODE = "666666";
-    public static final String EXPIRED_CONFIRMATION_CODE = "111111";
+    static final String VALID_CONFIRMATION_CODE = "123456";
+    static final String INVALID_CONFIRMATION_CODE = "666666";
+    static final String EXPIRED_CONFIRMATION_CODE = "111111";
+
+    static final int RESERVED_PROFILES_TEST_PORT = 55555;
 
     @BeforeEach
     void setUp() {
@@ -106,7 +111,16 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
 
 
     @Test
-    void shouldReturnOkIfConfirmationCodeIsValid() {
+    void shouldReturnOkIfConfirmationCodeIsValid() throws IOException {
+
+        MockWebServer mockWebServer = new MockWebServer();
+        mockWebServer
+                .enqueue(new MockResponse()
+                        .setResponseCode(200)
+                );
+
+        mockWebServer.start(RESERVED_PROFILES_TEST_PORT);
+
         RegistrationFormDto form = RegistrationFormDto.randomForm()
                 .withEmail("odeyalo@gmail.com");
 
@@ -115,6 +129,8 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
         WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
 
         answer.expectStatus().isOk();
+
+        mockWebServer.close();
     }
 
     @Test
