@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-6: Register the user on remote service after the user confirmed registration"

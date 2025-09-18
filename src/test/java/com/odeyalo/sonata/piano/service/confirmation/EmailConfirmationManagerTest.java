@@ -4,6 +4,8 @@ import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.InMemoryUserService;
 import com.odeyalo.sonata.piano.service.UserService;
+import com.odeyalo.sonata.piano.service.confirmation.callback.UserEmailConfirmationCallback;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -60,6 +62,28 @@ class EmailConfirmationManagerTest {
                     .assertNext(user -> assertThat(user.activated()).isTrue())
                     .verifyComplete();
         }
+
+        @Test
+        void shouldTriggerSuccessCallback() {
+            final UserService userService = new InMemoryUserService(List.of(USER));
+            var callback = new SpyCallback();
+
+            final EmailConfirmationManager testable = new EmailConfirmationManager(
+                    STATIC_LOADER,
+                    userService,
+                    List.of(callback)
+            );
+
+            testable.confirmEmail(VALID_CODE_VALUE).block();
+
+            userService.findById(USER.id())
+                    .as(StepVerifier::create)
+                    .expectNextCount(1)
+                    .verifyComplete();
+
+            assertThat(callback.isSuccessTriggered()).isTrue();
+
+        }
     }
 
     @Nested
@@ -92,6 +116,22 @@ class EmailConfirmationManagerTest {
                     .as(StepVerifier::create)
                     .assertNext(status -> assertThat(status).isEqualTo(DENIED))
                     .verifyComplete();
+        }
+    }
+
+    private static class SpyCallback implements UserEmailConfirmationCallback {
+        private boolean successTriggered = false;
+
+        @Override
+        @NotNull
+        public Mono<Void> onSuccess(@NotNull final User user,
+                                             @NotNull final ConfirmationCode code) {
+            successTriggered = true;
+            return UserEmailConfirmationCallback.super.onSuccess(user, code);
+        }
+
+        public boolean isSuccessTriggered() {
+            return successTriggered;
         }
     }
 }

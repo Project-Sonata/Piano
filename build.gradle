@@ -101,7 +101,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'org.postgresql:postgresql'
 
-    implementation 'springdoc-openapi-starter-webflux-api:2.6.0'
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.6.0")
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -121,6 +121,7 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'name.bychkov:junit5-fakesmtp:1.0.1:jakarta'
     testImplementation 'org.testcontainers:postgresql'
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.named('test') {
