@@ -1,5 +1,6 @@
 package com.odeyalo.sonata.piano.support.jwt;
 
+import com.odeyalo.sonata.piano.support.jwt.JwtToken.Lifetime;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
@@ -33,28 +34,32 @@ public class SecretKeyJwtTokenManager implements JwtTokenManager {
     @Override
     @NotNull
     public Mono<JwtToken> generateJwt(@NotNull final GenerationOptions options) {
-        final Instant generationTime = Instant.now();
+        final Lifetime lifetime = Lifetime.lasting(options.lifetime());
 
-        final Date issuedAt = Date.from(generationTime);
-        final Date expiresIn = Date.from(generationTime.plusSeconds(options.lifetime().toSeconds()));
-        final Map<String, Object> additionalClaims = options.additionalClaims();
+        final Map<String, Object> claims = normalizeClaims(options);
 
         final JwtBuilder jwtBuilder = Jwts.builder()
                 .id(UUID.randomUUID().toString())
-                .issuedAt(issuedAt)
-                .expiration(expiresIn)
+                .issuedAt(Date.from(lifetime.issuedAt()))
+                .expiration(Date.from(lifetime.expiresAt()))
                 .signWith(secretKeySupplier.get())
-                .claims(additionalClaims);
+                .claims(claims);
 
-        if ( options.defaultClaimsOverridePolicy() == DO_NOT_OVERRIDE ) {
-            final Map<String, Object> claims = removeDefaultClaimsFromAdditional(options);
 
-            jwtBuilder.claims(claims);
-        }
-
-        final JwtToken jwtToken = convertToJwtToken(options, expiresIn, jwtBuilder);
+        final JwtToken jwtToken = JwtToken.withTokenValue(jwtBuilder.compact())
+                .lifetime(lifetime)
+                .claims(claims)
+                .build();
 
         return Mono.just(jwtToken);
+    }
+
+    @NotNull
+    private static Map<String, Object> normalizeClaims(@NotNull final GenerationOptions options) {
+        if ( options.defaultClaimsOverridePolicy() != DO_NOT_OVERRIDE ) {
+            return options.additionalClaims();
+        }
+        return removeDefaultClaimsFromAdditional(options);
     }
 
     @Override
@@ -69,15 +74,9 @@ public class SecretKeyJwtTokenManager implements JwtTokenManager {
         });
     }
 
-    private static JwtToken convertToJwtToken(@NotNull GenerationOptions options, Date expiresIn, JwtBuilder jwtBuilder) {
-        return withTokenValue(jwtBuilder.compact())
-                .lifetime(options.lifetime())
-                .expiresIn(expiresIn.toInstant().getEpochSecond())
-                .build();
-    }
-
-    private static Map<String, Object> removeDefaultClaimsFromAdditional(@NotNull GenerationOptions options) {
-        HashMap<String, Object> newClaims = new HashMap<>(options.additionalClaims());
+    @NotNull
+    private static Map<String, Object> removeDefaultClaimsFromAdditional(@NotNull final GenerationOptions options) {
+        final HashMap<String, Object> newClaims = new HashMap<>(options.additionalClaims());
         DEFAULT_CLAIMS.forEach(newClaims.keySet()::remove);
         return newClaims;
     }

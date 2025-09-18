@@ -12,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.odeyalo.sonata.piano.support.jwt.JwtTokenGenerator.GenerationOptions.DefaultClaimsOverridePolicy.OVERRIDE;
@@ -90,7 +91,21 @@ class SecretKeyJwtTokenManagerTest {
 
         testable.generateJwt(generationOptions)
                 .as(StepVerifier::create)
-                .expectNextMatches(actual -> Objects.equals(actual.lifetime(), lifetime))
+                .assertNext(actual -> assertThat(actual.lifetime().duration()).isEqualTo(lifetime))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldSetClaims() {
+        GenerationOptions generationOptions = GenerationOptions.builder()
+                .additionalClaim("user", "miku")
+                .build();
+
+        testable.generateJwt(generationOptions)
+                .as(StepVerifier::create)
+                .assertNext(actual -> assertThat(actual.claims()).isEqualTo(Map.of(
+                        "user", "miku"
+                )))
                 .verifyComplete();
     }
 
@@ -115,7 +130,7 @@ class SecretKeyJwtTokenManagerTest {
 
         testable.parseToken(token.tokenValue())
                 .as(StepVerifier::create)
-                .expectNextMatches(actual -> !actual.remainingLifetime().isNegative())
+                .assertNext(actual -> assertThat(actual.remainingLifetime()).isPositive())
                 .verifyComplete();
     }
 
