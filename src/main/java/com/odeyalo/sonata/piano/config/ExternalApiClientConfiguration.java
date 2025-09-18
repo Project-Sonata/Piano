@@ -1,5 +1,7 @@
 package com.odeyalo.sonata.piano.config;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -8,10 +10,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ExternalApiClientConfiguration {
 
     @Bean
-    public WebClient webClient() {
+    public WebClient remoteSonataProfilesWebClient(@Value("${sonata.profiles.url}") @NotNull final String url) {
         return WebClient.builder()
-                .baseUrl("http://localhost:51026")
+                .baseUrl(url)
                 .build();
     }
-
 }

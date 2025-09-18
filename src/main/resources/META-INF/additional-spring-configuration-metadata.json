@@ -9,5 +9,10 @@
       "name": "sonata.mail.password",
       "type": "java.lang.String",
       "description": "A password to connect to remote SMTP server."
+    },
+    {
+      "name": "sonata.profiles.url",
+      "type": "java.lang.String",
+      "description": "URL to send user profile/account related requests."
     }
   ] }

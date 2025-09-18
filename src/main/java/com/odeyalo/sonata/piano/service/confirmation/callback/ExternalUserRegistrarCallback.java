@@ -6,6 +6,7 @@ import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCode;
 import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 public final class ExternalUserRegistrarCallback implements UserEmailConfirmationCallback {
     private final WebClient webClient;
 
-    public ExternalUserRegistrarCallback(final WebClient webClient) {
+    public ExternalUserRegistrarCallback(@Qualifier("remoteSonataProfilesWebClient") final WebClient webClient) {
         this.webClient = webClient;
     }
 
