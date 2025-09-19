@@ -39,4 +39,8 @@ public record Lifetime(@NotNull Instant issuedAt,
     public Duration duration() {
         return Duration.between(issuedAt, expiresAt);
     }
+
+    public boolean isExpired() {
+        return expiresAt.isBefore(Instant.now());
+    }
 }

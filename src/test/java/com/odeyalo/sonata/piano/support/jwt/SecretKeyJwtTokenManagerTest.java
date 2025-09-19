@@ -50,7 +50,7 @@ class SecretKeyJwtTokenManagerTest {
 
         testable.generateJwt(generationOptions)
                 .as(StepVerifier::create)
-                .expectNextMatches(jwtToken -> Objects.equals(parseClaims(jwtToken).get("waifu", String.class), "miku"))
+                .assertNext(jwtToken -> assertThat(parseClaims(jwtToken).get("waifu")).isEqualTo("miku"))
                 .verifyComplete();
     }
 

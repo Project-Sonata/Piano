@@ -18,7 +18,7 @@ public final class JwtTokensGenerator implements TokensGenerator {
     @NotNull
     public Mono<Tokens> generateTokensFor(@NotNull final User user) {
         final JwtTokenGenerator.GenerationOptions options = JwtTokenGenerator.GenerationOptions.builder()
-                .additionalClaim("user_id", user.id())
+                .additionalClaim("user_id", user.id().value())
                 .build();
 
         return jwtTokenGenerator.generateJwt(options)
