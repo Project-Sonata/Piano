@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
  * A callback that register the user in Piano-Profiles after successful email confirmation
  */
 @Component
+@Profile("!local")
 public final class ExternalUserRegistrarCallback implements UserEmailConfirmationCallback {
     private final WebClient webClient;
 
