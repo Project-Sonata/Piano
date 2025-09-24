@@ -13,6 +13,7 @@ import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import testing.api.client.PianoClient;
@@ -57,7 +60,17 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
     static final String INVALID_CONFIRMATION_CODE = "666666";
     static final String EXPIRED_CONFIRMATION_CODE = "111111";
 
-    static final int RESERVED_PROFILES_TEST_PORT = 55555;
+    static final MockWebServer PROFILES_SERVICE = new MockWebServer();
+
+    @BeforeAll
+    static void prepare() throws Exception {
+        PROFILES_SERVICE.start(0);
+    }
+
+    @DynamicPropertySource
+    static void registerDynamicProperties(@NotNull final DynamicPropertyRegistry registry) {
+        registry.add("sonata.profiles.url", () -> "http://localhost:" + PROFILES_SERVICE.getPort());
+    }
 
     @BeforeEach
     void setUp() {
@@ -116,15 +129,11 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
 
 
     @Test
-    void shouldReturnOkIfConfirmationCodeIsValid() throws IOException {
-        final MockWebServer mockWebServer = new MockWebServer();
-
-        mockWebServer
+    void shouldReturnOkIfConfirmationCodeIsValid() {
+        PROFILES_SERVICE
                 .enqueue(new MockResponse()
                         .setResponseCode(200)
                 );
-
-        mockWebServer.start(RESERVED_PROFILES_TEST_PORT);
 
         final RegistrationFormDto form = RegistrationFormDto.randomForm()
                 .withEmail("odeyalo@gmail.com");
@@ -138,20 +147,14 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
             assertThat(tokens).isNotNull();
             assertThat(tokens.accessToken()).isNotNull();
         });
-
-        mockWebServer.close();
     }
 
     @Test
-    void shouldReturnValidAccessToken() throws Exception {
-        final MockWebServer mockWebServer = new MockWebServer();
-
-        mockWebServer
+    void shouldReturnValidAccessToken() {
+        PROFILES_SERVICE
                 .enqueue(new MockResponse()
                         .setResponseCode(200)
                 );
-
-        mockWebServer.start(RESERVED_PROFILES_TEST_PORT);
 
         final RegistrationFormDto form = RegistrationFormDto.randomForm()
                 .withEmail("odeyalo@gmail.com");
@@ -181,8 +184,6 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
             assertThat(response.userId()).isNotNull();
             assertThat(response.expiresAt()).isNotNull();
         });
-
-        mockWebServer.close();
     }
 
     @Test
