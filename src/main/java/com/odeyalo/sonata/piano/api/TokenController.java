@@ -20,16 +20,17 @@ public final class TokenController {
     }
 
     @PostMapping("/access")
-    public Mono<ResponseEntity<?>> validateAccessToken(@RequestBody Map<String, Object> body) {
+    public Mono<ResponseEntity<?>> validateAccessToken(@RequestBody final Map<String, Object> body) {
         final String accessToken = (String) body.get("access_token");
         return jwtTokenManager.parseToken(accessToken)
                 .map(metadata -> {
                     if ( metadata.remainingLifetime().isExpired() ) {
-                        return  ResponseEntity.badRequest().build();
+                        return ResponseEntity.badRequest().build();
                     }
-                    String userId = metadata.get("user_id", String.class);
+                    final String userId = metadata.get("user_id", String.class);
 
                     return ResponseEntity.ok(Map.of(
+                            "expires_at", metadata.remainingLifetime().expiresAt().getEpochSecond(),
                             "user_id", userId
                     ));
                 });

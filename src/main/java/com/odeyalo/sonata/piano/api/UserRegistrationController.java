@@ -24,14 +24,11 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 @RequestMapping("/v1/signup")
 public final class UserRegistrationController {
     private final EmailPasswordRegistrationManager registrationManager;
-    private final EmailConfirmationManager confirmationManager;
     private final EmailConfirmationGateway emailConfirmationGateway;
 
     public UserRegistrationController(final EmailPasswordRegistrationManager registrationManager,
-                                      final EmailConfirmationManager confirmationManager,
                                       final EmailConfirmationGateway emailConfirmationGateway) {
         this.registrationManager = registrationManager;
-        this.confirmationManager = confirmationManager;
         this.emailConfirmationGateway = emailConfirmationGateway;
     }
 
