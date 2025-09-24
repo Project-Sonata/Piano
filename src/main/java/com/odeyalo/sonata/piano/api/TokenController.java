@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.api;
 
 import com.odeyalo.sonata.piano.support.jwt.JwtTokenManager;
+import com.odeyalo.sonata.piano.support.web.HttpStatuses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,11 @@ public final class TokenController {
     @PostMapping("/access")
     public Mono<ResponseEntity<?>> validateAccessToken(@RequestBody final Map<String, Object> body) {
         final String accessToken = (String) body.get("access_token");
+
+        if (accessToken == null || accessToken.isEmpty()) {
+            return Mono.just(HttpStatuses.badRequest());
+        }
+
         // It should be moved to Service layer, but I think it's ok as it is
         return jwtTokenManager.parseToken(accessToken)
                 .map(metadata -> {
