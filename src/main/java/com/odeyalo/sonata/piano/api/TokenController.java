@@ -22,6 +22,7 @@ public final class TokenController {
     @PostMapping("/access")
     public Mono<ResponseEntity<?>> validateAccessToken(@RequestBody final Map<String, Object> body) {
         final String accessToken = (String) body.get("access_token");
+        // It should be moved to Service layer, but I think it's ok as it is
         return jwtTokenManager.parseToken(accessToken)
                 .map(metadata -> {
                     if ( metadata.remainingLifetime().isExpired() ) {
