@@ -1,7 +1,10 @@
 package com.odeyalo.sonata.piano.api;
 
+import com.odeyalo.sonata.piano.api.dto.TokensDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.AccessTokenValidationResponseDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.EmailConfirmationCodeDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.ValidateAccessTokenDto;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.repository.UserRepository;
@@ -10,6 +13,7 @@ import com.odeyalo.sonata.piano.service.confirmation.ConfirmationCodeService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import testing.api.client.PianoClient;
@@ -29,8 +35,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest
@@ -52,7 +60,17 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
     static final String INVALID_CONFIRMATION_CODE = "666666";
     static final String EXPIRED_CONFIRMATION_CODE = "111111";
 
-    static final int RESERVED_PROFILES_TEST_PORT = 55555;
+    static final MockWebServer PROFILES_SERVICE = new MockWebServer();
+
+    @BeforeAll
+    static void prepare() throws Exception {
+        PROFILES_SERVICE.start(0);
+    }
+
+    @DynamicPropertySource
+    static void registerDynamicProperties(@NotNull final DynamicPropertyRegistry registry) {
+        registry.add("sonata.profiles.url", () -> "http://localhost:" + PROFILES_SERVICE.getPort());
+    }
 
     @BeforeEach
     void setUp() {
@@ -111,26 +129,61 @@ class EmailConfirmationEndpointTest extends AbstractIntegrationTest {
 
 
     @Test
-    void shouldReturnOkIfConfirmationCodeIsValid() throws IOException {
-
-        MockWebServer mockWebServer = new MockWebServer();
-        mockWebServer
+    void shouldReturnOkIfConfirmationCodeIsValid() {
+        PROFILES_SERVICE
                 .enqueue(new MockResponse()
                         .setResponseCode(200)
                 );
 
-        mockWebServer.start(RESERVED_PROFILES_TEST_PORT);
-
-        RegistrationFormDto form = RegistrationFormDto.randomForm()
+        final RegistrationFormDto form = RegistrationFormDto.randomForm()
                 .withEmail("odeyalo@gmail.com");
 
         pianoClient.sendRegistrationForm(form);
 
-        WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
+        final WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
+
+        answer.expectStatus().isOk();
+        answer.expectBody(TokensDto.class).value(tokens -> {
+            assertThat(tokens).isNotNull();
+            assertThat(tokens.accessToken()).isNotNull();
+        });
+    }
+
+    @Test
+    void shouldReturnValidAccessToken() {
+        PROFILES_SERVICE
+                .enqueue(new MockResponse()
+                        .setResponseCode(200)
+                );
+
+        final RegistrationFormDto form = RegistrationFormDto.randomForm()
+                .withEmail("odeyalo@gmail.com");
+
+        pianoClient.sendRegistrationForm(form);
+
+        final WebTestClient.ResponseSpec answer = sendEmailConfirmationWithCode(VALID_CONFIRMATION_CODE);
 
         answer.expectStatus().isOk();
 
-        mockWebServer.close();
+        final TokensDto tokens = Objects.requireNonNull(answer.expectBody(TokensDto.class)
+                .returnResult().getResponseBody());
+
+        final String accessToken = tokens.accessToken();
+
+        final var body = ValidateAccessTokenDto.builder()
+                .accessToken(accessToken)
+                .build();
+
+        final WebTestClient.ResponseSpec responseSpec = webTestClient.post().uri("/v1/tokens/access")
+                .bodyValue(body)
+                .exchange();
+
+        responseSpec.expectStatus().isOk();
+        responseSpec.expectHeader().contentType(APPLICATION_JSON);
+        responseSpec.expectBody(AccessTokenValidationResponseDto.class).value(response -> {
+            assertThat(response.userId()).isNotNull();
+            assertThat(response.expiresAt()).isNotNull();
+        });
     }
 
     @Test

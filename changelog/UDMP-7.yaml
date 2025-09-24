@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-7: Generate access token after successful registration"
