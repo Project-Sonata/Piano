@@ -5,7 +5,6 @@ import com.odeyalo.sonata.piano.api.dto.EmailConfirmationRequiredResponseDto;
 import com.odeyalo.sonata.piano.api.dto.response.TokensDto;
 import com.odeyalo.sonata.piano.exception.InvalidConfirmationCodeException;
 import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationGateway;
-import com.odeyalo.sonata.piano.service.confirmation.EmailConfirmationManager;
 import com.odeyalo.sonata.piano.service.registration.email.EmailPasswordRegistrationManager;
 import com.odeyalo.sonata.piano.service.registration.email.RegistrationForm;
 import com.odeyalo.sonata.piano.support.web.HttpStatuses;
