@@ -1,8 +1,8 @@
 package com.odeyalo.sonata.piano.service.login;
 
 import com.odeyalo.sonata.common.authentication.exception.InvalidCredentialsException;
-import com.odeyalo.sonata.piano.api.dto.response.TokensDto;
 import com.odeyalo.sonata.piano.model.LoginCredentials;
+import com.odeyalo.sonata.piano.service.token.Tokens;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +18,6 @@ public interface LoginManager {
      * or {@link InvalidCredentialsException} error wrapped in {@link Mono} if supplied credentials are not valid
      */
     @NotNull
-    Mono<TokensDto> login(@NotNull final LoginCredentials credentials);
+    Mono<Tokens> login(@NotNull final LoginCredentials credentials);
 
 }

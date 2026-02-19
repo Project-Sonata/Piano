@@ -32,7 +32,7 @@ public final class LoginController {
                 body.password()
         );
         return loginManager.login(credentials)
-                .map(HttpStatuses::ok)
-                .defaultIfEmpty(HttpStatuses.unauthorized());
+                .map(tokens -> new TokensDto(tokens.accessToken()))
+                .map(HttpStatuses::ok);
     }
 }
