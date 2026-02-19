@@ -1,13 +1,37 @@
 package com.odeyalo.sonata.piano.exception;
 
+import com.odeyalo.sonata.common.authentication.exception.InvalidCredentialsException;
 import com.odeyalo.sonata.piano.api.dto.ExceptionMessage;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public final class GlobalExceptionHandlerController {
+
+    @ExceptionHandler(UserAccountNotActivatedException.class)
+    public ResponseEntity<ExceptionMessage> handleUserAccountNotActivatedException(@NotNull final UserAccountNotActivatedException ex) {
+        final ExceptionMessage exceptionMessage = ExceptionMessage.of(
+                "Email is not confirmed"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(exceptionMessage);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ExceptionMessage> handleInvalidCredentialsException(@NotNull final InvalidCredentialsException ex) {
+        final ExceptionMessage exceptionMessage = ExceptionMessage.of(
+                ex.getErrorDetails().getDescription()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(exceptionMessage);
+    }
 
     @ExceptionHandler(EmailRegexException.class)
     public ResponseEntity<ExceptionMessage> emailRegexException(@NotNull final EmailRegexException ex) {

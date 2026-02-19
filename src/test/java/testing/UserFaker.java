@@ -10,7 +10,7 @@ public final class UserFaker {
 
     public UserFaker() {
 
-        Birthdate birthdate = Birthdate.of(faker.date().birthday(18, 60));
+        final Birthdate birthdate = Birthdate.of(faker.date().birthday(18, 60));
 
         builder
                 .id(UserId.random())
@@ -33,6 +33,16 @@ public final class UserFaker {
 
     public UserFaker withActivated(final boolean activated) {
         builder.activated(activated);
+        return this;
+    }
+
+    public UserFaker withEmailConfirmed(final boolean emailConfirmed) {
+        builder.emailConfirmed(emailConfirmed);
+        return this;
+    }
+
+    public UserFaker withPassword(final String password) {
+        builder.password(password);
         return this;
     }
 

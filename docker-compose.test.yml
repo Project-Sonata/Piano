@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
-
+    privileged: true
     environment:
       # Used to download required dependencies from Suite module
       GITHUB_USERNAME: ${GH_USERNAME}
