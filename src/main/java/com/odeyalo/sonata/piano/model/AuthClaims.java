@@ -6,9 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public final class AuthClaims implements Claims {
+    @NotNull
     private final Map<String, Object> claims;
 
-    private AuthClaims(final Map<String, Object> claims) {
+    private AuthClaims(@NotNull final Map<String, Object> claims) {
         this.claims = claims;
     }
 
