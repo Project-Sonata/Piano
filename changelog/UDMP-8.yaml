@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-8: Implement reactive login endpoint with email/password schema, including account activation and email confirmation checks"
