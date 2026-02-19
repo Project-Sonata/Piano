@@ -7,6 +7,7 @@ import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.InMemoryUserService;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
+import com.odeyalo.sonata.piano.service.token.JwtTokensGenerator;
 import com.odeyalo.sonata.piano.support.jwt.SecretKeyJwtTokenManager;
 import com.odeyalo.sonata.piano.support.jwt.StaticJwtTokenSecretKeySupplier;
 import io.jsonwebtoken.Jwts;
@@ -107,7 +108,7 @@ class DefaultLoginManagerTest {
             return new DefaultLoginManager(
                     new InMemoryUserService(users),
                     passwordEncoder,
-                    new SecretKeyJwtTokenManager(new StaticJwtTokenSecretKeySupplier(SECRET_KEY))
+                    new JwtTokensGenerator(new SecretKeyJwtTokenManager(new StaticJwtTokenSecretKeySupplier(SECRET_KEY)))
             );
         }
     }

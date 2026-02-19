@@ -6,9 +6,8 @@ import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.UserService;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
 import com.odeyalo.sonata.piano.service.token.Tokens;
+import com.odeyalo.sonata.piano.service.token.TokensGenerator;
 import com.odeyalo.sonata.piano.support.ErrorDetailsFactory;
-import com.odeyalo.sonata.piano.support.jwt.JwtTokenGenerator;
-import com.odeyalo.sonata.piano.support.jwt.JwtTokenManager;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -17,14 +16,14 @@ import reactor.core.publisher.Mono;
 public final class DefaultLoginManager implements LoginManager {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenManager jwtTokenManager;
+    private final TokensGenerator tokensGenerator;
 
     public DefaultLoginManager(final UserService userService,
                                final PasswordEncoder passwordEncoder,
-                               final JwtTokenManager jwtTokenManager) {
+                               final TokensGenerator tokensGenerator) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.jwtTokenManager = jwtTokenManager;
+        this.tokensGenerator = tokensGenerator;
     }
 
     @Override
@@ -35,7 +34,7 @@ public final class DefaultLoginManager implements LoginManager {
                         new InvalidCredentialsException(ErrorDetailsFactory.invalidCredentials())
                 ))
                 .flatMap(user -> validateCredentials(user, credentials))
-                .flatMap(this::generateTokens);
+                .flatMap(tokensGenerator::generateTokensFor);
     }
 
     @NotNull
@@ -49,17 +48,5 @@ public final class DefaultLoginManager implements LoginManager {
         return Mono.error(new InvalidCredentialsException(
                 ErrorDetailsFactory.invalidCredentials()
         ));
-
-    }
-
-    @NotNull
-    private Mono<Tokens> generateTokens(@NotNull final User user) {
-
-        final JwtTokenGenerator.GenerationOptions options = JwtTokenGenerator.GenerationOptions.builder()
-                .additionalClaim("user_id", user.id().value())
-                .build();
-
-        return jwtTokenManager.generateJwt(options)
-                .map(jwt -> new Tokens(jwt.tokenValue()));
     }
 }

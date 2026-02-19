@@ -1,6 +1,5 @@
 package com.odeyalo.sonata.piano.support.jwt;
 
-import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Singular;
@@ -15,6 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.odeyalo.sonata.piano.support.jwt.JwtTokenGenerator.GenerationOptions.DefaultClaimsOverridePolicy.DO_NOT_OVERRIDE;
+import static io.jsonwebtoken.Claims.*;
 
 /**
  * Generate JWT tokens only.
@@ -23,7 +23,7 @@ public interface JwtTokenGenerator {
 
     GenerationOptions DEFAULT_OPTIONS = GenerationOptions.useDefault();
 
-    Collection<String> DEFAULT_CLAIMS = List.of(Claims.ID, Claims.ISSUED_AT, Claims.EXPIRATION);
+    Collection<String> DEFAULT_CLAIMS = List.of(ID, ISSUED_AT, EXPIRATION);
 
     /**
      * Generate jwt token and return it
