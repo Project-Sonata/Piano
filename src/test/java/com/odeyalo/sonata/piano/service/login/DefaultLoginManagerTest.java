@@ -1,85 +1,103 @@
 package com.odeyalo.sonata.piano.service.login;
 
-import com.odeyalo.sonata.piano.entity.UserEntity;
-import com.odeyalo.sonata.piano.repository.UserRepository;
+import com.odeyalo.sonata.piano.model.Email;
+import com.odeyalo.sonata.piano.model.LoginCredentials;
+import com.odeyalo.sonata.piano.model.User;
+import com.odeyalo.sonata.piano.service.InMemoryUserService;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
-import com.odeyalo.sonata.piano.support.jwt.JwtToken;
-import com.odeyalo.sonata.piano.support.jwt.JwtTokenManager;
-import com.odeyalo.sonata.piano.support.jwt.Lifetime;
+import com.odeyalo.sonata.piano.service.support.TestingPasswordEncoder;
+import com.odeyalo.sonata.piano.support.jwt.SecretKeyJwtTokenManager;
+import com.odeyalo.sonata.piano.support.jwt.StaticJwtTokenSecretKeySupplier;
+import io.jsonwebtoken.Jwts;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-import testing.faker.UserEntityFaker;
+import testing.UserFaker;
 
-import java.util.Map;
+import javax.crypto.SecretKey;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
 class DefaultLoginManagerTest {
 
-    @Mock
-    UserRepository userRepository;
-
-    @Mock
-    PasswordEncoder passwordEncoder;
-
-    @Mock
-    JwtTokenManager jwtTokenManager;
-
-    @InjectMocks
-    DefaultLoginManager loginManager;
-
     @Test
-    void login_withValidCredentials_shouldReturnTokens() {
-        String email = "test@example.com";
-        String password = "password";
-        String encodedPassword = "encodedPassword";
-        UserEntity user = UserEntityFaker.newUser()
-                .withEmail(email)
-                .get()
-                .withPassword(encodedPassword);
+    void shouldReturnTokensIfCredentialsAreValid() {
+        final PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
+        final String encodedPassword = passwordEncoder.encode("password123");
 
-        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-        when(passwordEncoder.matches(password, encodedPassword)).thenReturn(true);
-        Lifetime lifetime = Lifetime.lasting(java.time.Duration.ofMinutes(15));
-        when(jwtTokenManager.generateJwt(any())).thenReturn(Mono.just(JwtToken.of("token", lifetime, Map.of())));
+        final DefaultLoginManager testable = TestableBuilder.builder()
+                .withPasswordEncoder(passwordEncoder)
+                .withUser(UserFaker.create()
+                        .withEmail("test@example.com")
+                        .withPassword(encodedPassword)
+                        .get())
+                .build();
 
-        StepVerifier.create(loginManager.login(email, password))
-                .expectNextMatches(tokens -> tokens.accessToken().equals("token"))
+        final LoginCredentials credentials = LoginCredentials.of(Email.valueOf("test@example.com"), "password123");
+
+        testable.login(credentials)
+                .as(StepVerifier::create)
+                .assertNext(tokens -> assertThat(tokens.accessToken()).isNotEmpty())
                 .verifyComplete();
     }
 
     @Test
-    void login_withInvalidPassword_shouldReturnEmpty() {
-        String email = "test@example.com";
-        String password = "wrongPassword";
-        String encodedPassword = "encodedPassword";
-        UserEntity user = UserEntityFaker.newUser()
-                .withEmail(email)
-                .get()
-                .withPassword(encodedPassword);
+    void shouldReturnEmptyIfPasswordIsIncorrect() {
+        final PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
 
-        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-        when(passwordEncoder.matches(password, encodedPassword)).thenReturn(false);
+        final DefaultLoginManager testable = TestableBuilder.builder()
+                .withPasswordEncoder(passwordEncoder)
+                .withUser(UserFaker.create()
+                        .withEmail("test@example.com")
+                        .withPassword(passwordEncoder.encode("correct_password"))
+                        .get())
+                .build();
 
-        StepVerifier.create(loginManager.login(email, password))
+        final LoginCredentials credentials = LoginCredentials.of(Email.valueOf("test@example.com"), "wrong_password");
+
+        testable.login(credentials)
+                .as(StepVerifier::create)
                 .verifyComplete();
     }
 
     @Test
-    void login_withNonExistentUser_shouldReturnEmpty() {
-        String email = "nonexistent@example.com";
-        String password = "password";
+    void shouldReturnEmptyIfUserDoesNotExist() {
+        final DefaultLoginManager testable = TestableBuilder.builder().build();
 
-        when(userRepository.findByEmail(email)).thenReturn(Mono.empty());
+        final LoginCredentials credentials = LoginCredentials.of(Email.valueOf("nonexistent@example.com"), "any_password");
 
-        StepVerifier.create(loginManager.login(email, password))
+        testable.login(credentials)
+                .as(StepVerifier::create)
                 .verifyComplete();
+    }
+
+    private static class TestableBuilder {
+        private PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
+        private final List<User> users = new ArrayList<>();
+        private static final SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
+
+        public static TestableBuilder builder() {
+            return new TestableBuilder();
+        }
+
+        public TestableBuilder withPasswordEncoder(final PasswordEncoder passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+            return this;
+        }
+
+        public TestableBuilder withUser(final User user) {
+            this.users.add(user);
+            return this;
+        }
+
+        public DefaultLoginManager build() {
+            return new DefaultLoginManager(
+                    new InMemoryUserService(users),
+                    passwordEncoder,
+                    new SecretKeyJwtTokenManager(new StaticJwtTokenSecretKeySupplier(SECRET_KEY))
+            );
+        }
     }
 }

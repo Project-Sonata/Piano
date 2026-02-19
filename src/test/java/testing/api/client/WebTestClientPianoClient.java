@@ -1,5 +1,6 @@
 package testing.api.client;
 
+import com.odeyalo.sonata.piano.api.dto.EmailPasswordLoginRequestDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationFormDto;
 import com.odeyalo.sonata.piano.api.exchange.dto.RegistrationResponseDto;
 import org.jetbrains.annotations.NotNull;
@@ -33,5 +34,15 @@ public final class WebTestClientPianoClient implements PianoClient {
                 "Missing response body for Email registration API, as it is required by SPEC, test is failing! " +
                         "Consider check the '/v1/signup/email' endpoint that it returns body correctly"
         );
+    }
+
+    @Override
+    @NotNull
+    public WebTestClient.ResponseSpec login(@NotNull final EmailPasswordLoginRequestDto loginRequest) {
+        return webTestClient.post()
+                .uri("/v1/login/email")
+                .contentType(APPLICATION_JSON)
+                .bodyValue(loginRequest)
+                .exchange();
     }
 }

@@ -44,6 +44,8 @@ This project, **Piano**, is an authentication microservice for the Sonata projec
 ### Coding Style & Standards
 - **Reactive Programming:** The project follows the reactive paradigm using Project Reactor (Mono/Flux). Ensure all I/O and service calls remain non-blocking.
 - **Null Safety:** Strict enforcement of nullability annotations. A custom Checkstyle rule (`RequiredFieldAnnotationCheck`) requires all non-primitive fields in certain packages to be annotated with `@NotNull` or `@Nullable`.
+- **Readability & Immutability:** Fields, local variables, and parameters should have the `final` modifier whenever possible to improve readability and enforce immutability.
+- **Domain Modeling:** Prefer using custom classes (Value Objects) to wrap related parameters with meaningful names (e.g., `LoginCredentials` instead of separate email and password strings). Leverage existing domain objects like `Email` where appropriate.
 - **Response Handling:** Uses a custom `HttpStatuses` utility for consistent `ResponseEntity` creation.
 - **Lombok:** Heavily used for reducing boilerplate (e.g., `@Value`, `@Builder`, `@AllArgsConstructor`).
 

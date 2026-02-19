@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service.login;
 
 import com.odeyalo.sonata.piano.api.dto.response.TokensDto;
+import com.odeyalo.sonata.piano.model.LoginCredentials;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
@@ -10,12 +11,11 @@ import reactor.core.publisher.Mono;
 public interface LoginManager {
 
     /**
-     * Login user with email and password
-     * @param email user email
-     * @param password user raw password
+     * Login user with credentials
+     * @param credentials user credentials
      * @return Mono with tokens if success, or empty if failed
      */
     @NotNull
-    Mono<TokensDto> login(@NotNull String email, @NotNull String password);
+    Mono<TokensDto> login(@NotNull final LoginCredentials credentials);
 
 }
