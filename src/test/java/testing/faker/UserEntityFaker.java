@@ -60,6 +60,12 @@ public final class UserEntityFaker {
     }
 
     @NotNull
+    public UserEntityFaker withEmailConfirmed(final boolean emailConfirmed) {
+        builder.emailConfirmed(emailConfirmed);
+        return this;
+    }
+
+    @NotNull
     public UserEntity get() {
         return builder.build();
     }

@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service.login;
 
 import com.odeyalo.sonata.common.authentication.exception.InvalidCredentialsException;
+import com.odeyalo.sonata.piano.exception.UserAccountNotActivatedException;
 import com.odeyalo.sonata.piano.model.Email;
 import com.odeyalo.sonata.piano.model.LoginCredentials;
 import com.odeyalo.sonata.piano.model.User;
@@ -33,6 +34,8 @@ class DefaultLoginManagerTest {
                 .withUser(UserFaker.create()
                         .withEmail("test@example.com")
                         .withPassword(encodedPassword)
+                        .withActivated(true)
+                        .withEmailConfirmed(true)
                         .get())
                 .build();
 
@@ -45,6 +48,56 @@ class DefaultLoginManagerTest {
                 .as(StepVerifier::create)
                 .assertNext(tokens -> assertThat(tokens.accessToken()).isNotEmpty())
                 .verifyComplete();
+    }
+
+    @Test
+    void shouldReturnErrorIfEmailIsNotConfirmed() {
+        final PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
+        final String encodedPassword = passwordEncoder.encode("password123");
+
+        final DefaultLoginManager testable = TestableBuilder.builder()
+                .withPasswordEncoder(passwordEncoder)
+                .withUser(UserFaker.create()
+                        .withEmail("test@example.com")
+                        .withPassword(encodedPassword)
+                        .withEmailConfirmed(false)
+                        .get())
+                .build();
+
+        final LoginCredentials credentials = LoginCredentials.of(
+                Email.valueOf("test@example.com"),
+                "password123"
+        );
+
+        testable.login(credentials)
+                .as(StepVerifier::create)
+                .expectError(UserAccountNotActivatedException.class)
+                .verify();
+    }
+
+    @Test
+    void shouldReturnErrorIfAccountIsNotActivated() {
+        final PasswordEncoder passwordEncoder = new TestingPasswordEncoder();
+        final String encodedPassword = passwordEncoder.encode("password123");
+
+        final DefaultLoginManager testable = TestableBuilder.builder()
+                .withPasswordEncoder(passwordEncoder)
+                .withUser(UserFaker.create()
+                        .withEmail("test@example.com")
+                        .withPassword(encodedPassword)
+                        .withActivated(false)
+                        .get())
+                .build();
+
+        final LoginCredentials credentials = LoginCredentials.of(
+                Email.valueOf("test@example.com"),
+                "password123"
+        );
+
+        testable.login(credentials)
+                .as(StepVerifier::create)
+                .expectError(UserAccountNotActivatedException.class)
+                .verify();
     }
 
     @Test

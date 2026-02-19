@@ -2,6 +2,7 @@ package com.odeyalo.sonata.piano.api;
 
 import com.odeyalo.sonata.piano.api.dto.EmailPasswordLoginRequestDto;
 import com.odeyalo.sonata.piano.api.dto.response.TokensDto;
+import com.odeyalo.sonata.piano.api.exchange.dto.ExceptionMessageDto;
 import com.odeyalo.sonata.piano.entity.UserEntity;
 import com.odeyalo.sonata.piano.repository.UserRepository;
 import com.odeyalo.sonata.piano.service.support.PasswordEncoder;
@@ -44,6 +45,8 @@ class EmailPasswordLoginEndpointTest extends AbstractIntegrationTest {
         final String password = "password123";
         final UserEntity user = UserEntityFaker.newUser()
                 .withEmail("test@example.com")
+                .withActivated(true)
+                .withEmailConfirmed(true)
                 .get()
                 .withPassword(passwordEncoder.encode(password));
 
@@ -59,6 +62,54 @@ class EmailPasswordLoginEndpointTest extends AbstractIntegrationTest {
         response.expectStatus().isOk()
                 .expectBody(TokensDto.class)
                 .value(tokens -> assertThat(tokens.accessToken()).isNotEmpty());
+    }
+
+    @Test
+    void shouldReturn403ForbiddenIfEmailIsNotConfirmed() {
+        final String password = "password123";
+        final UserEntity user = UserEntityFaker.newUser()
+                .withEmail("test@example.com")
+                .withActivated(true)
+                .withEmailConfirmed(false)
+                .get()
+                .withPassword(passwordEncoder.encode(password));
+
+        userRepository.save(user).block();
+
+        final EmailPasswordLoginRequestDto loginRequest = EmailPasswordLoginRequestDto.builder()
+                .email("test@example.com")
+                .password(password)
+                .build();
+
+        final WebTestClient.ResponseSpec response = pianoClient.login(loginRequest);
+
+        response.expectStatus().isForbidden()
+                .expectBody(ExceptionMessageDto.class)
+                .value(message -> assertThat(message.description()).isEqualTo("Email is not confirmed"));
+    }
+
+    @Test
+    void shouldReturn403ForbiddenIfAccountIsNotActivated() {
+        final String password = "password123";
+        final UserEntity user = UserEntityFaker.newUser()
+                .withEmail("test@example.com")
+                .withActivated(false)
+                .withEmailConfirmed(true)
+                .get()
+                .withPassword(passwordEncoder.encode(password));
+
+        userRepository.save(user).block();
+
+        final EmailPasswordLoginRequestDto loginRequest = EmailPasswordLoginRequestDto.builder()
+                .email("test@example.com")
+                .password(password)
+                .build();
+
+        final WebTestClient.ResponseSpec response = pianoClient.login(loginRequest);
+
+        response.expectStatus().isForbidden()
+                .expectBody(ExceptionMessageDto.class)
+                .value(message -> assertThat(message.description()).isEqualTo("Email is not confirmed"));
     }
 
     @Test

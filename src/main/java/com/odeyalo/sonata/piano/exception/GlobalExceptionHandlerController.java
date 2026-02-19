@@ -11,6 +11,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public final class GlobalExceptionHandlerController {
 
+    @ExceptionHandler(UserAccountNotActivatedException.class)
+    public ResponseEntity<ExceptionMessage> handleUserAccountNotActivatedException(@NotNull final UserAccountNotActivatedException ex) {
+        final ExceptionMessage exceptionMessage = ExceptionMessage.of(
+                "Email is not confirmed"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(exceptionMessage);
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ExceptionMessage> handleInvalidCredentialsException(@NotNull final InvalidCredentialsException ex) {
         final ExceptionMessage exceptionMessage = ExceptionMessage.of(

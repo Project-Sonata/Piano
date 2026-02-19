@@ -13,4 +13,13 @@ public final class ErrorDetailsFactory {
                 "Try another credentials"
         );
     }
+
+    @NotNull
+    public static ErrorDetails emailConfirmationRequired() {
+        return ErrorDetails.of(
+                "email_confirmation_required",
+                "Email is not confirmed",
+                "Please confirm your email address"
+        );
+    }
 }

@@ -1,6 +1,7 @@
 package com.odeyalo.sonata.piano.service.login;
 
 import com.odeyalo.sonata.common.authentication.exception.InvalidCredentialsException;
+import com.odeyalo.sonata.piano.exception.UserAccountNotActivatedException;
 import com.odeyalo.sonata.piano.model.LoginCredentials;
 import com.odeyalo.sonata.piano.model.User;
 import com.odeyalo.sonata.piano.service.UserService;
@@ -41,12 +42,18 @@ public final class DefaultLoginManager implements LoginManager {
     private Mono<User> validateCredentials(@NotNull final User user,
                                            @NotNull final LoginCredentials credentials) {
 
-        if ( passwordEncoder.matches(credentials.password(), user.password()) ) {
-            return Mono.just(user);
+        if ( !passwordEncoder.matches(credentials.password(), user.password()) ) {
+            return Mono.error(new InvalidCredentialsException(
+                    ErrorDetailsFactory.invalidCredentials()
+            ));
         }
 
-        return Mono.error(new InvalidCredentialsException(
-                ErrorDetailsFactory.invalidCredentials()
-        ));
+        if (!user.isActivated() || !user.isEmailConfirmed()) {
+            return Mono.error(new UserAccountNotActivatedException(
+                    ErrorDetailsFactory.emailConfirmationRequired()
+            ));
+        }
+
+        return Mono.just(user);
     }
 }

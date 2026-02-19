@@ -36,6 +36,11 @@ public final class UserFaker {
         return this;
     }
 
+    public UserFaker withEmailConfirmed(final boolean emailConfirmed) {
+        builder.emailConfirmed(emailConfirmed);
+        return this;
+    }
+
     public UserFaker withPassword(final String password) {
         builder.password(password);
         return this;
