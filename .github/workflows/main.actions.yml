@@ -22,3 +22,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Run tests
         uses: ./.github/actions/tests
+      - name: Cache Gradle packages
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/notifications/
+          key: ${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}

@@ -5,7 +5,7 @@ runs:
   using: "composite"
   steps:
     - name: Run tests
-      run: bash run-tests.sh
+      run: ./gradlew test jacocoTestReport
       shell: bash
     - name: Prepare build artifact
       run: zip -r build.zip build/
