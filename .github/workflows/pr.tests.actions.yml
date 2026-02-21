@@ -39,6 +39,10 @@ jobs:
     needs: test
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - name: Fetch master branch
+      run: git fetch origin master:refs/remotes/origin/master
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
     - name: Run SonarQube analysis with report
