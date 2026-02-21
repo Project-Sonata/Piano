@@ -9,6 +9,8 @@ on:
       - "Dockerfile.test"
       - "Dockerfile.test.mutation"
       - "build.gradle"
+      - ".github/workflows/pr.tests.actions.yml"
+      - ".github/actions/tests/action.yml"
 
 env:
   GH_USERNAME: ${{ secrets.GH_USERNAME }}
