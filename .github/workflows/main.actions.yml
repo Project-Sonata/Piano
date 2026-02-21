@@ -20,13 +20,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: 'true'
+          cache-write-only: 'true'
       - name: Run tests
         uses: ./.github/actions/tests
-      - name: Cache Gradle packages
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ~/.gradle/notifications/
-          key: ${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
