@@ -26,7 +26,7 @@ runs:
         restore-keys: ${{ runner.os }}-sonar
     - name: SonarQube Scan
       run: |
-        ./gradlew --build-cache classes jacocoTestReport sonar -Dsonar.projectKey=sonata-piano \
+        ./gradlew --build-cache sonar -Dsonar.projectKey=sonata-piano \
           -Dsonar.scm.provider=git \
           -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }} \
           -Dsonar.pullrequest.key=${{ github.event.number }} \
