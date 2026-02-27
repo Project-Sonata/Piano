@@ -10,8 +10,6 @@ import com.odeyalo.sonata.piano.service.token.Tokens;
 import com.odeyalo.sonata.piano.service.token.TokensGenerator;
 import com.odeyalo.sonata.piano.support.ErrorDetailsFactory;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -20,7 +18,6 @@ public final class DefaultLoginManager implements LoginManager {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final TokensGenerator tokensGenerator;
-    private final Logger logger = LoggerFactory.getLogger(DefaultLoginManager.class);
 
     public DefaultLoginManager(final UserService userService,
                                final PasswordEncoder passwordEncoder,
@@ -51,7 +48,7 @@ public final class DefaultLoginManager implements LoginManager {
             ));
         }
 
-        if ( !user.isActivated() || !user.isEmailConfirmed() ) {
+        if (!user.isActivated() || !user.isEmailConfirmed()) {
             return Mono.error(new UserAccountNotActivatedException(
                     ErrorDetailsFactory.emailConfirmationRequired()
             ));
