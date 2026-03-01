@@ -1,0 +1,4 @@
+sonata:
+  piano:
+    enhancement:
+      - "UDMP-11: Add Gemini Skills and automatic AI review"
